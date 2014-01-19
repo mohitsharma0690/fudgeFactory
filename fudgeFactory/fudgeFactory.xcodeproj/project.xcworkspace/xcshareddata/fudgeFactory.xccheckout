@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>29AD2516-8044-4B15-B439-BD02C784AE25</string>
+	<key>IDESourceControlProjectName</key>
+	<string>fudgeFactory</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>CC936D24-BEA4-4D29-A190-D63DB49C04E8</key>
+		<string>ssh://github.com/mohitsharma0690/fudgeFactory.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>fudgeFactory/fudgeFactory.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>CC936D24-BEA4-4D29-A190-D63DB49C04E8</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/mohitsharma0690/fudgeFactory.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>CC936D24-BEA4-4D29-A190-D63DB49C04E8</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>CC936D24-BEA4-4D29-A190-D63DB49C04E8</string>
+			<key>IDESourceControlWCCName</key>
+			<string>fudgeFactory</string>
+		</dict>
+	</array>
+</dict>
+</plist>

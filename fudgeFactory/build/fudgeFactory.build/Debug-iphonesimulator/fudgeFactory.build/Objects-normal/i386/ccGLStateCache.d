@@ -1,0 +1,25 @@
+dependencies: \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/ccGLStateCache.m \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/ccGLStateCache.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/ccMacros.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/ccConfig.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/Platforms/CCGL.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/Platforms/iOS/CCGLView.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/Platforms/iOS/CCESRenderer.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/CCGLProgram.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/CCDirector.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/ccTypes.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/CCProtocols.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/CCTexture2D.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/fudgeFactory/libs/cocos2d/Platforms/CCNS.h \
+  fudgeFactory/libs/kazmath/include/kazmath/mat4.h \
+  fudgeFactory/libs/kazmath/include/kazmath/utility.h \
+  fudgeFactory/libs/kazmath/include/kazmath/GL/matrix.h \
+  fudgeFactory/libs/kazmath/include/kazmath/GL/../vec3.h \
+  fudgeFactory/libs/kazmath/include/kazmath/kazmath.h \
+  fudgeFactory/libs/kazmath/include/kazmath/vec2.h \
+  fudgeFactory/libs/kazmath/include/kazmath/mat3.h \
+  fudgeFactory/libs/kazmath/include/kazmath/quaternion.h \
+  fudgeFactory/libs/kazmath/include/kazmath/plane.h \
+  fudgeFactory/libs/kazmath/include/kazmath/aabb.h \
+  fudgeFactory/libs/kazmath/include/kazmath/ray2.h
