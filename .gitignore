@@ -1,0 +1,10 @@
+# build products
+*.[oa]
+fudgeFactory/build/
+fudgeFactory/build/*.[oa]
+fudgeFactory/Pods/build/
+fudgeFactory/Pods/build/*.[oa]
+
+# xcode data
+xcuserdata/
+*.xcworkspace

@@ -8,6 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		4D30FD0C65A540C1B1A307AB /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7CD4BDBB6949AEB3F99151 /* libPods.a */; };
+		9104F23C188CE39900678D3C /* GameLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9104F23B188CE39900678D3C /* GameLayer.m */; };
+		9104F242188CE59B00678D3C /* tile.png in Resources */ = {isa = PBXBuildFile; fileRef = 9104F241188CE59B00678D3C /* tile.png */; };
+		9104F245188CF78E00678D3C /* GameObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 9104F244188CF78E00678D3C /* GameObject.m */; };
+		9104F248188CF79B00678D3C /* GameController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9104F247188CF79B00678D3C /* GameController.m */; };
+		9104F24D188D200200678D3C /* blackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 9104F249188D200200678D3C /* blackButton.png */; };
+		9104F24E188D200200678D3C /* goButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 9104F24A188D200200678D3C /* goButton.png */; };
+		9104F24F188D200200678D3C /* greenButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 9104F24B188D200200678D3C /* greenButton.png */; };
+		9104F250188D200200678D3C /* redButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 9104F24C188D200200678D3C /* redButton.png */; };
 		91DFEEFD165999AC00F06C7E /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 91DFEEFC165999AC00F06C7E /* Default.png */; };
 		91DFEEFF165999AC00F06C7E /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 91DFEEFE165999AC00F06C7E /* Default-Landscape~ipad.png */; };
 		91DFEF01165999AC00F06C7E /* fps_images.png in Resources */ = {isa = PBXBuildFile; fileRef = 91DFEF00165999AC00F06C7E /* fps_images.png */; };
@@ -29,6 +37,17 @@
 /* Begin PBXFileReference section */
 		553B74825DE3486B8AFAAFCD /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		5F7CD4BDBB6949AEB3F99151 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9104F23A188CE39900678D3C /* GameLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameLayer.h; sourceTree = "<group>"; };
+		9104F23B188CE39900678D3C /* GameLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameLayer.m; sourceTree = "<group>"; };
+		9104F241188CE59B00678D3C /* tile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tile.png; path = Resources/tile.png; sourceTree = "<group>"; };
+		9104F243188CF78E00678D3C /* GameObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameObject.h; sourceTree = "<group>"; };
+		9104F244188CF78E00678D3C /* GameObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameObject.m; sourceTree = "<group>"; };
+		9104F246188CF79B00678D3C /* GameController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameController.h; sourceTree = "<group>"; };
+		9104F247188CF79B00678D3C /* GameController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameController.m; sourceTree = "<group>"; };
+		9104F249188D200200678D3C /* blackButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blackButton.png; sourceTree = "<group>"; };
+		9104F24A188D200200678D3C /* goButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goButton.png; sourceTree = "<group>"; };
+		9104F24B188D200200678D3C /* greenButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = greenButton.png; sourceTree = "<group>"; };
+		9104F24C188D200200678D3C /* redButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redButton.png; sourceTree = "<group>"; };
 		91DFEEE4165999AC00F06C7E /* fudgeFactory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fudgeFactory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91DFEEE8165999AC00F06C7E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		91DFEEEA165999AC00F06C7E /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -120,6 +139,12 @@
 				91DFF079165999AE00F06C7E /* IntroLayer.m */,
 				91DFEEFB165999AC00F06C7E /* Resources */,
 				91DFF06E165999AE00F06C7E /* Supporting Files */,
+				9104F23A188CE39900678D3C /* GameLayer.h */,
+				9104F23B188CE39900678D3C /* GameLayer.m */,
+				9104F243188CF78E00678D3C /* GameObject.h */,
+				9104F244188CF78E00678D3C /* GameObject.m */,
+				9104F246188CF79B00678D3C /* GameController.h */,
+				9104F247188CF79B00678D3C /* GameController.m */,
 			);
 			path = fudgeFactory;
 			sourceTree = "<group>";
@@ -127,6 +152,11 @@
 		91DFEEFB165999AC00F06C7E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9104F249188D200200678D3C /* blackButton.png */,
+				9104F24A188D200200678D3C /* goButton.png */,
+				9104F24B188D200200678D3C /* greenButton.png */,
+				9104F24C188D200200678D3C /* redButton.png */,
+				9104F241188CE59B00678D3C /* tile.png */,
 				91DFEEFC165999AC00F06C7E /* Default.png */,
 				91DFEEFE165999AC00F06C7E /* Default-Landscape~ipad.png */,
 				91DFEF00165999AC00F06C7E /* fps_images.png */,
@@ -205,6 +235,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9104F250188D200200678D3C /* redButton.png in Resources */,
 				91DFEEFD165999AC00F06C7E /* Default.png in Resources */,
 				91DFEEFF165999AC00F06C7E /* Default-Landscape~ipad.png in Resources */,
 				91DFEF01165999AC00F06C7E /* fps_images.png in Resources */,
@@ -212,11 +243,15 @@
 				91DFEF05165999AC00F06C7E /* fps_images-ipadhd.png in Resources */,
 				91DFEF07165999AC00F06C7E /* Icon-72.png in Resources */,
 				91DFEF09165999AC00F06C7E /* Icon-Small-50.png in Resources */,
+				9104F242188CE59B00678D3C /* tile.png in Resources */,
 				91DFEF0B165999AC00F06C7E /* Icon-Small.png in Resources */,
+				9104F24D188D200200678D3C /* blackButton.png in Resources */,
 				91DFEF0D165999AC00F06C7E /* Icon-Small@2x.png in Resources */,
 				91DFEF0F165999AC00F06C7E /* Icon.png in Resources */,
+				9104F24E188D200200678D3C /* goButton.png in Resources */,
 				91DFEF11165999AC00F06C7E /* Icon@2x.png in Resources */,
 				91DFEF14165999AC00F06C7E /* iTunesArtwork in Resources */,
+				9104F24F188D200200678D3C /* greenButton.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,6 +299,9 @@
 				91DFF074165999AE00F06C7E /* AppDelegate.m in Sources */,
 				91DFF077165999AE00F06C7E /* HelloWorldLayer.m in Sources */,
 				91DFF07A165999AE00F06C7E /* IntroLayer.m in Sources */,
+				9104F248188CF79B00678D3C /* GameController.m in Sources */,
+				9104F245188CF78E00678D3C /* GameObject.m in Sources */,
+				9104F23C188CE39900678D3C /* GameLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
