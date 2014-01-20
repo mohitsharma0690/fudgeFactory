@@ -6,7 +6,7 @@
 //  Copyright __MyCompanyName__ 2012. All rights reserved.
 //
 
-#import "cocos2d.h"
+#import "cocos2d/cocos2d.h"
 
 // HelloWorldLayer
 @interface HelloWorldLayer : CCLayer

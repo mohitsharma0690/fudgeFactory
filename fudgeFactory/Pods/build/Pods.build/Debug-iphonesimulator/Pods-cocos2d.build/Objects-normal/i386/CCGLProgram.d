@@ -1,0 +1,26 @@
+dependencies: \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/CCGLProgram.m \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/CCGLProgram.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/ccMacros.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/ccConfig.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/Platforms/CCGL.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/Platforms/iOS/CCGLView.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/Platforms/iOS/CCESRenderer.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/ccGLStateCache.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/Support/CCFileUtils.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/Support/../ccTypes.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/Support/uthash.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/Support/OpenGL_Internal.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/CCDirector.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/cocos2d/CCProtocols.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/mat4.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/utility.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/GL/matrix.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/GL/../vec3.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/kazmath.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/vec2.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/mat3.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/quaternion.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/plane.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/aabb.h \
+  /Users/mohitsharma/projects/fudgeFactory/fudgeFactory/Pods/cocos2d/external/kazmath/include/kazmath/ray2.h
