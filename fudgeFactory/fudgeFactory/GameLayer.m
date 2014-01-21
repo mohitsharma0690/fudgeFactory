@@ -19,12 +19,21 @@
 #define kChangeSourceImage          @"redButton.png"
 #define kChangeWallImage            @"blackButton.png"
 
+typedef enum {
+    CHANGE_INVALID,
+    CHANGE_START,
+    CHANGE_END,
+    CHANGE_WALL
+} ChangeState;
+
 @interface GameLayer ()
 
 @property (nonatomic, readwrite, strong) GameController *gameController;
 
 @property (nonatomic, readwrite, assign) int boardWidth;
 @property (nonatomic, readwrite, assign) int boardHeight;
+@property (nonatomic, readwrite, assign) ChangeState currentState;
+
 @property (nonatomic, readwrite, strong) NSMutableDictionary *gridPointToSpriteMap;
 
 @end
@@ -67,7 +76,7 @@
     
     CCMenuItemImage *changeDestButton = [CCMenuItemImage itemWithNormalImage:kChangeDestinationImage
                                                                selectedImage:kChangeDestinationImage target:self
-                                                                    selector:@selector(wantToChangeDestinationPosition)];
+                                                                    selector:@selector(wantToChangeEndPosition)];
     
     CCMenuItemImage *changeWalkability = [CCMenuItemImage itemWithNormalImage:kChangeWallImage
                                                                 selectedImage:kChangeWallImage target:self
@@ -82,13 +91,25 @@
     changeWalkability.position = ccpAdd(changeDestButton.position, ccp(0, kButtonHeight));
     
     [self addChild:menu];
+    
+    CCLabelTTF *searchLabel = [CCLabelTTF labelWithString:@"Search/Reset" fontName:@"Marker Felt" fontSize:10];
+    CCLabelTTF *greenLabel = [CCLabelTTF labelWithString:@"Change Start Point" fontName:@"Marker Felt" fontSize:10];
+    CCLabelTTF *redLabel = [CCLabelTTF labelWithString:@"Change End Point" fontName:@"Marker Felt" fontSize:10];
+    CCLabelTTF *blackLabel = [CCLabelTTF labelWithString:@"Toggle Wall" fontName:@"Marker Felt" fontSize:10];
+    NSArray *labels = @[searchLabel, greenLabel, redLabel, blackLabel];
+    CGPoint labelPosition = menu.position;
+    for (CCLabelTTF *label in labels) {
+        [self addChild:label];
+        label.position = labelPosition;
+        labelPosition = ccpAdd(labelPosition, ccp(0, kButtonHeight));
+    }
 }
 
 #pragma mark - GameBoard
 
 - (void)setupDefaultStartPositions {
-    [self changeColorAtBoardPoint:ccp(0, _boardHeight - 1) to:kStartColor];
-    [self changeColorAtBoardPoint:ccp(_boardWidth - 1, 0) to:kEndColor];
+    [self changeColorForSpriteAtBoardPoint:ccp(0, _boardHeight - 1) to:kStartColor];
+    [self changeColorForSpriteAtBoardPoint:ccp(_boardWidth - 1, 0) to:kEndColor];
 }
 
 - (void)colorBoardAtX:(int)x y:(int)y withColor:(ccColor3B)color {
@@ -115,7 +136,21 @@
     [(CCSprite *)self.gridPointToSpriteMap[[NSValue valueWithCGPoint:self.gameController.endPoint]] setColor:kEndColor];
 }
 
-- (void)scaleBoardSpriteToFitNode {
+- (void)resetGameBoard {
+    for (int i = 0; i < self.boardWidth; i++) {
+        for (int j = 0; j < self.boardHeight; j++) {
+            CGPoint boardPoint = ccp(i, j);
+            CCSprite *sprite = self.gridPointToSpriteMap[[NSValue valueWithCGPoint:boardPoint]];
+            if ([self.gameController isWalkableAtBoardPoint:boardPoint]) {
+                sprite.color = kWalkableColor;
+            } else {
+                sprite.color = kUnwalkableColor;
+            }
+        }
+    }
+    // set start and end default positions
+    [(CCSprite *)self.gridPointToSpriteMap[[NSValue valueWithCGPoint:self.gameController.startPoint]] setColor:kStartColor];
+    [(CCSprite *)self.gridPointToSpriteMap[[NSValue valueWithCGPoint:self.gameController.endPoint]] setColor:kEndColor];
 }
 
 - (CGPoint)positionAtBoardPointX:(int)x y:(int)y {
@@ -132,23 +167,12 @@
 }
 
 - (void)changeColorAtPoint:(CGPoint)viewPoint to:(ccColor3B)newColor {
-    [self changeColorAtBoardPoint:[self boardPointAtViewPoint:viewPoint] to:newColor];
-}
-
-- (void)changeColorAtBoardPoint:(CGPoint)boardPoint to:(ccColor3B)newColor {
-    CCSprite *sprite = self.gridPointToSpriteMap[[NSValue valueWithCGPoint:boardPoint]];
-    ccColor3B oldColor = sprite.color;
-    sprite.color = newColor;
-    [self.gameController didChangeSpriteColorAt:boardPoint from:oldColor to:newColor];
+    [self changeColorForSpriteAtBoardPoint:[self boardPointAtViewPoint:viewPoint] to:newColor];
 }
 
 - (void)changeColorForSpriteAtBoardPoint:(CGPoint)boardPoint to:(ccColor3B)color {
     CCSprite *sprite = self.gridPointToSpriteMap[[NSValue valueWithCGPoint:boardPoint]];
-    if (sprite) {
-        sprite.color = color;
-    } else {
-        NSLog(@"ERROR");
-    }
+    sprite.color = color;
 }
 
 #pragma mark - Touch
@@ -159,23 +183,53 @@
 }
 
 - (BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event {
-    return YES;
+    CGPoint viewPoint = [self convertTouchToNodeSpace:touch];
+    CGPoint boardPoint = [self boardPointAtViewPoint:viewPoint];
+    if (self.currentState == CHANGE_START) {
+        CGPoint currentStartPoint = [self.gameController startPoint];
+        if (!CGPointEqualToPoint(currentStartPoint, boardPoint) && [self.gameController isValidStartPoint:boardPoint]) {
+            [self changeColorForSpriteAtBoardPoint:boardPoint to:kStartColor];
+            [self changeColorForSpriteAtBoardPoint:currentStartPoint to:kWalkableColor];
+            [self.gameController didChangeStartPointTo:boardPoint];
+        }
+        return YES;
+    } else if (self.currentState == CHANGE_END) {
+        CGPoint currentEndPoint = [self.gameController endPoint];
+        if (!CGPointEqualToPoint(currentEndPoint, boardPoint) && [self.gameController isValidStartPoint:boardPoint]) {
+            [self changeColorForSpriteAtBoardPoint:boardPoint to:kEndColor];
+            [self changeColorForSpriteAtBoardPoint:currentEndPoint to:kWalkableColor];
+            [self.gameController didChangeEndPointTo:boardPoint];
+        }
+        return YES;
+    } else if (self.currentState == CHANGE_WALL) {
+        if ([self.gameController isValidWallPoint:boardPoint]) {
+            [self.gameController toggleWallAtPoint:boardPoint];
+            if ([self.gameController isWalkableAtBoardPoint:boardPoint]) {
+                [self changeColorForSpriteAtBoardPoint:boardPoint to:kWalkableColor];
+            } else {
+                [self changeColorForSpriteAtBoardPoint:boardPoint to:kUnwalkableColor];
+            }
+        }
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 - (void)didTapGoButton {
     [self.gameController didTapGoButton];
 }
 
-- (void)wantToChangeSourcePosition {
-    
+- (void)wantToChangeStartPosition {
+    self.currentState = CHANGE_START;
 }
 
-- (void)wantToChangeDestinationPosition {
-    
+- (void)wantToChangeEndPosition {
+    self.currentState = CHANGE_END;
 }
 
 - (void)wantToChangeWallPosition {
-    
+    self.currentState = CHANGE_WALL;
 }
 
 @end

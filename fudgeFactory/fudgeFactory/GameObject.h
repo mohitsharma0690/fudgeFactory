@@ -21,4 +21,13 @@
 
 - (void)startSearchForPath;
 
+#pragma mark - State
+
+- (BOOL)isValidStartPoint:(CGPoint)startPoint;
+- (BOOL)isValidEndPoint:(CGPoint)endPoint;
+- (BOOL)isValidWallAtPoint:(CGPoint)wallPoint;
+- (void)didChangeStartPointTo:(CGPoint)startPoint;
+- (void)didChangeEndPointTo:(CGPoint)endPoint;
+- (void)toggleWallAtPoint:(CGPoint)wallPoint;
+
 @end

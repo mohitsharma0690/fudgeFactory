@@ -72,42 +72,108 @@
         for (int i = 0; i < 8; i++) {
             CGPoint neighborPoint = CGPointMake(currentPoint.x + neighbors[i][0], currentPoint.y + neighbors[i][1]);
             NSValue *neighborPointValue = [NSValue valueWithCGPoint:neighborPoint];
-            if (![self isWalkableAtBoardPoint:neighborPoint]) {
+            if (![self canMoveToPoint:neighborPoint from:currentPoint]) {
                 continue;
             } else if ([closedSet containsObject:neighborPointValue]) {
                 continue;
             }
             int distanceForNeighbor = [openSet[neighborPointValue] intValue];
-            if (distanceForNeighbor && distanceForNeighbor > currentDistance + 1) {
+            // use 1 as movement length for all neighbors
+            int distanceToNeighborFromCurrentPoint = 1;
+            if (distanceForNeighbor && distanceForNeighbor >= currentDistance + distanceToNeighborFromCurrentPoint) {
                 continue;
             } else {
-                openSet[neighborPointValue] = @(currentDistance + 1);
+                openSet[neighborPointValue] = @(currentDistance + distanceToNeighborFromCurrentPoint);
             }
-            
         }
     }
 }
 
-- (unsigned short)distanceBetweenX1:(unsigned short)x1 y1:(unsigned short)y1 x2:(unsigned short)x2 y2:(unsigned short)y2 {
+- (BOOL)canMoveToPoint:(CGPoint)neighborPoint from:(CGPoint)currentPoint {
+    if ([self isWalkableAtBoardPoint:neighborPoint]) {
+        int vx = neighborPoint.x - currentPoint.x;
+        int vy = neighborPoint.y - currentPoint.y;
+        if (vx && vy) {
+            // diagnol move
+            return ([self isWalkableAtBoardPoint:CGPointMake(currentPoint.x + vx, currentPoint.y)] &&
+                    [self isWalkableAtBoardPoint:CGPointMake(currentPoint.x, currentPoint.y + vy)]);
+        } else {
+            return YES;
+        }
+    } else {
+        return NO;
+    }
+}
+
+// heuristic distance
+- (int)distanceBetweenX1:(int)x1 y1:(int)y1 x2:(int)x2 y2:(int)y2 {
     return abs(x1 - x2) + abs(y1 - y2);
 }
 
+// heuristic distance
 - (NSUInteger)distanceBetweenA:(CGPoint)a b:(CGPoint)b {
     return [self distanceBetweenX1:a.x y1:a.y x2:b.x y2:b.y];
 }
 
 - (NSValue *)chooseNextPointToMoveToFromOpenSet:(NSDictionary *)openSet {
     NSValue *nextPointValue;
-    int maxDistance = INT_MAX;
+    int minDistance = INT_MAX;
     for (NSValue *pointValue in openSet) {
         int distToPoint = [openSet[pointValue] intValue];
         int distToDestination = [self distanceBetweenA:pointValue.CGPointValue b:self.endPoint];
-        if ((distToPoint + distToDestination) < maxDistance) {
-            maxDistance = distToPoint + distToDestination;
+        if ((distToPoint + distToDestination) < minDistance) {
+            minDistance = distToPoint + distToDestination;
             nextPointValue = pointValue;
         }
     }
     return nextPointValue;
+}
+
+#pragma mark - State
+
+- (BOOL)isValidStartPoint:(CGPoint)startPoint {
+    if (self.gridWalkabilityMap[[NSValue valueWithCGPoint:startPoint]] != nil) {
+        // cannot have start point as end point
+        return !CGPointEqualToPoint(self.endPoint, startPoint);
+    } else {
+        return NO;
+    }
+}
+
+- (BOOL)isValidEndPoint:(CGPoint)endPoint {
+    if (self.gridWalkabilityMap[[NSValue valueWithCGPoint:endPoint]] != nil) {
+        // cannot have start point as end point
+        return !CGPointEqualToPoint(self.startPoint, endPoint);
+    } else {
+        return NO;
+    }
+}
+
+- (BOOL)isValidWallAtPoint:(CGPoint)wallPoint {
+    if (!CGPointEqualToPoint(self.startPoint, wallPoint) && !CGPointEqualToPoint(self.endPoint, wallPoint)) {
+        return self.gridWalkabilityMap[[NSValue valueWithCGPoint:wallPoint]] != nil;
+    } else {
+        return NO;
+    }
+}
+
+- (void)didChangeStartPointTo:(CGPoint)startPoint {
+    // previous start point is now walkable
+    self.gridWalkabilityMap[[NSValue valueWithCGPoint:self.startPoint]] = @YES;
+    self.gridWalkabilityMap[[NSValue valueWithCGPoint:startPoint]] = @YES;
+    self.startPoint = startPoint;
+}
+
+- (void)didChangeEndPointTo:(CGPoint)endPoint {
+    // previous end point is now walkable
+    self.gridWalkabilityMap[[NSValue valueWithCGPoint:self.endPoint]] = @YES;
+    self.gridWalkabilityMap[[NSValue valueWithCGPoint:endPoint]] = @YES;
+    self.endPoint = endPoint;
+}
+
+- (void)toggleWallAtPoint:(CGPoint)wallPoint {
+    BOOL currentWalkability = [self.gridWalkabilityMap[[NSValue valueWithCGPoint:wallPoint]] boolValue];
+    self.gridWalkabilityMap[[NSValue valueWithCGPoint:wallPoint]] = @(!currentWalkability);
 }
 
 @end

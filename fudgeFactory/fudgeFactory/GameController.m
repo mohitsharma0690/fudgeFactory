@@ -16,6 +16,10 @@
 @property (nonatomic, readwrite, strong) GameObject *gameObject;
 @property (nonatomic, readwrite, weak) GameLayer *gameLayer;
 
+// used for resetting
+@property (nonatomic, readwrite, assign) int cellsToColor;
+@property (nonatomic, readwrite, assign) BOOL didPerformSearch;
+
 @end
 
 @implementation GameController
@@ -66,6 +70,30 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
     return self.gameObject.endPoint;
 }
 
+- (BOOL)isValidStartPoint:(CGPoint)boardStartPoint {
+    return [self.gameObject isValidStartPoint:boardStartPoint];
+}
+
+- (BOOL)isValidEndPoint:(CGPoint)boardEndPoint {
+    return [self.gameObject isValidEndPoint:boardEndPoint];
+}
+
+- (BOOL)isValidWallPoint:(CGPoint)boardWallPoint {
+    return [self.gameObject isValidWallAtPoint:boardWallPoint];
+}
+
+- (void)didChangeStartPointTo:(CGPoint)startPoint {
+    return [self.gameObject didChangeStartPointTo:startPoint];
+}
+
+- (void)didChangeEndPointTo:(CGPoint)endPoint {
+    return [self.gameObject didChangeEndPointTo:endPoint];
+}
+
+- (void)toggleWallAtPoint:(CGPoint)wallPoint {
+    return [self.gameObject toggleWallAtPoint:wallPoint];
+}
+
 - (BOOL)isWalkableAtBoardPoint:(CGPoint)boardPoint {
     return [self.gameObject isWalkableAtBoardPoint:boardPoint];
 }
@@ -76,20 +104,30 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
 #pragma mark - Touch Callbacks
 
 - (void)didTapGoButton {
-    [self.gameObject startSearchForPath];
+    if (self.cellsToColor == 0 && !self.didPerformSearch) {
+        [self.gameObject startSearchForPath];
+    } else if (self.cellsToColor == 0 && self.didPerformSearch) {
+        [self.gameLayer resetGameBoard];
+        delay = 1.0f;
+        self.didPerformSearch = NO;
+    }
 }
 
 #pragma mark - Notifications
 static float delay = 1;
+
 - (void)didAddPointToClosedSet:(NSNotification *)notification {
     NSValue *pointValue = notification.object;
     
     [self performSelector:@selector(didReachSpriteAtBoardPoint:) withObject:pointValue afterDelay:delay];
     delay += 0.3f;
+    self.cellsToColor += 1;
+    self.didPerformSearch = YES;
 }
 
 - (void)didReachSpriteAtBoardPoint:(NSValue *)pointValue {
     [self.gameLayer changeColorForSpriteAtBoardPoint:pointValue.CGPointValue to:ccORANGE];
+    self.cellsToColor -= 1;
 }
 
 @end

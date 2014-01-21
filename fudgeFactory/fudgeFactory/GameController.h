@@ -31,6 +31,14 @@
 
 - (CGPoint)startPoint;
 - (CGPoint)endPoint;
+
+- (BOOL)isValidStartPoint:(CGPoint)boardStartPoint;
+- (BOOL)isValidEndPoint:(CGPoint)boardEndPoint;
+- (BOOL)isValidWallPoint:(CGPoint)boardWallPoint;
+- (void)didChangeStartPointTo:(CGPoint)startPoint;
+- (void)didChangeEndPointTo:(CGPoint)endPoint;
+- (void)toggleWallAtPoint:(CGPoint)wallPoint;
+
 - (BOOL)isWalkableAtBoardPoint:(CGPoint)boardPoint;
 
 #pragma mark - StateChange

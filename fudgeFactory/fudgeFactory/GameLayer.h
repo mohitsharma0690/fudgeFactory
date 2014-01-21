@@ -20,4 +20,6 @@
 
 - (void)changeColorForSpriteAtBoardPoint:(CGPoint)boardPoint to:(ccColor3B)color;
 
+- (void)resetGameBoard;
+
 @end
