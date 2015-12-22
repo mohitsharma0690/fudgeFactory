@@ -322,14 +322,48 @@
   return [self euclideanDistanceBetweenA:self.endPoint andB:point];
 }
 
+/// Jump points do not have immediate parents. We rather follow directions.
+/// Hence we need to reconstruct the path between two points based on their
+/// directions. The path returned here does not contain either a or b.
+- (NSArray *)jumpPathFromA:(CGPoint)a toB:(CGPoint)b {
+  if (CGPointEqualToPoint(a, b)) {
+    return @[];
+  }
+  NSMutableArray *path = [[NSMutableArray alloc] init];
+  int dx = b.x - a.x;
+  int dy = b.y - a.y;
+
+  // No intermediate node exists
+  if (ABS(dx) + ABS(dy) == 1) {
+    return @[];
+  }
+
+  if (dx && dy) {
+    NSAssert(ABS(dx) == ABS(dy), @"Invalid neither vertical, horizontal nor diagnol move");
+  }
+
+  int stepX = dx > 0 ? 1 : ((dx < 0) ? -1 : 0);
+  int stepY = dy > 0 ? 1 : ((dy < 0) ? -1 : 0);
+  CGPoint point = a;
+  while (!CGPointEqualToPoint(point, b)) {
+    point = CGPointMake(point.x + stepX, point.y + stepY);
+    [path addObject:[NSValue valueWithCGPoint:point]];
+  }
+  // Remove b from the path.
+  [path removeLastObject];
+  return path;
+}
+
 - (NSArray *)constructPathFromParentNodes:(NSMutableDictionary *)parentNodes {
-  NSMutableArray *path =
-      [NSMutableArray arrayWithObject:[NSValue valueWithCGPoint:self.endPoint]];
+  NSMutableArray *path = [[NSMutableArray alloc] init];
   CGPoint currentPoint = self.endPoint;
   do {
     NSValue *currentPointValue = [NSValue valueWithCGPoint:currentPoint];
     [path addObject:currentPointValue];
-    currentPoint = [parentNodes[currentPointValue] CGPointValue];
+    CGPoint parent = [parentNodes[currentPointValue] CGPointValue];
+    NSArray *connectingPath = [self jumpPathFromA:parent toB:currentPoint];
+    [path addObjectsFromArray:[[connectingPath reverseObjectEnumerator] allObjects]];
+    currentPoint = parent;
   } while (!CGPointEqualToPoint(currentPoint, self.startPoint));
   [path addObject:[NSValue valueWithCGPoint:self.startPoint]];
   return [[path reverseObjectEnumerator] allObjects];
