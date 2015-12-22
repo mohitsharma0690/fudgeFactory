@@ -54,7 +54,9 @@
   }
 
   int dx = node.x - parent.x;
+  dx = (dx > 0) ? 1 : ((dx < 0) ? -1 : 0);
   int dy = node.y - parent.y;
+  dy = (dy > 0) ? 1 : ((dy < 0) ? -1 : 0);
 
   if (dx && dy) {
     // diagnol move
@@ -132,7 +134,10 @@
   }
 
   int dx = node.x - parent.x;
+  dx = (dx > 0) ? 1 : ((dx < 0) ? -1 : 0);
+
   int dy = node.y - parent.y;
+  dy = (dy > 0) ? 1 : ((dy < 0) ? -1 : 0);
 
   if (dx && dy) {
     // Invalid diagnol move.
@@ -283,6 +288,8 @@
     CGPoint currentPoint = currentNodeValue.CGPointValue;
     if ([self isEndPoint:currentPoint]) {
       NSLog(@"Did successfully reach end point");
+      NSArray *path = [self constructPathFromParentNodes:parentNodes];
+      [[NSNotificationCenter defaultCenter] postNotificationName:@"didFindPath" object:path];
       return;
     }
 
@@ -313,6 +320,19 @@
 - (double)heuristicFromPoint:(CGPoint)point {
   // using euclidean distance
   return [self euclideanDistanceBetweenA:self.endPoint andB:point];
+}
+
+- (NSArray *)constructPathFromParentNodes:(NSMutableDictionary *)parentNodes {
+  NSMutableArray *path =
+      [NSMutableArray arrayWithObject:[NSValue valueWithCGPoint:self.endPoint]];
+  CGPoint currentPoint = self.endPoint;
+  do {
+    NSValue *currentPointValue = [NSValue valueWithCGPoint:currentPoint];
+    [path addObject:currentPointValue];
+    currentPoint = [parentNodes[currentPointValue] CGPointValue];
+  } while (!CGPointEqualToPoint(currentPoint, self.startPoint));
+  [path addObject:[NSValue valueWithCGPoint:self.startPoint]];
+  return [[path reverseObjectEnumerator] allObjects];
 }
 
 #pragma mark - GridWalkability

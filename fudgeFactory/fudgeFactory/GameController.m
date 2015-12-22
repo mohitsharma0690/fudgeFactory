@@ -36,15 +36,22 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
 
 - (id)initWithGameObject:(GameObject *)gameObject {
     if (self = [super init]) {
-        _gameObject = gameObject;
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didAddPointToClosedSet:)
-                                                     name:@"didAddToClosedSet" object:nil];
+      _gameObject = gameObject;
+      [[NSNotificationCenter defaultCenter] addObserver:self 
+                                               selector:@selector(didAddPointToClosedSet:)
+                                                   name:@"didAddToClosedSet"
+                                                 object:nil];
+
+      [[NSNotificationCenter defaultCenter] addObserver:self
+                                               selector:@selector(didFindPath:)
+                                                   name:@"didFindPath"
+                                                 object:nil];
     }
     return self;
 }
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)setGameLayer:(GameLayer *)gameLayer {
@@ -116,10 +123,33 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
 #pragma mark - Notifications
 static float delay = 1;
 
+- (void)didFindPath:(NSNotification *)notification {
+  NSArray *path = notification.object;
+  int startIndex = 0, endIndex = path.count - 1;
+  int index = 0;
+  for (NSValue *pointValue in path) {
+    if (index != startIndex && index != endIndex) {
+      [self performSelector:@selector(didReachPathAtPoint:)
+                 withObject:pointValue
+                 afterDelay:delay];
+      delay += 0.1f;
+      self.cellsToColor += 1;
+    }
+    index++;
+  }
+}
+
+- (void)didReachPathAtPoint:(NSValue *)pointValue {
+  [self.gameLayer changeColorForSpriteAtBoardPoint:pointValue.CGPointValue to:ccYELLOW];
+  self.cellsToColor -= 1;
+}
+
 - (void)didAddPointToClosedSet:(NSNotification *)notification {
     NSValue *pointValue = notification.object;
     
-    [self performSelector:@selector(didReachSpriteAtBoardPoint:) withObject:pointValue afterDelay:delay];
+    [self performSelector:@selector(didReachSpriteAtBoardPoint:)
+               withObject:pointValue
+               afterDelay:delay];
     delay += 0.3f;
     self.cellsToColor += 1;
     self.didPerformSearch = YES;
