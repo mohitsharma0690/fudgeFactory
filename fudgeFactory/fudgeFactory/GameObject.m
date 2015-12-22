@@ -91,13 +91,13 @@
     }
 
     // Forced neighbors -- (x, y - dy) or (x, y + dy) have obstacles
-    CGPoint downPoint = CGPointMake(node.x, node.y - dy);
-    CGPoint upPoint = CGPointMake(node.x, node.y + dy);
+    CGPoint downPoint = CGPointMake(node.x, node.y - 1);
+    CGPoint upPoint = CGPointMake(node.x, node.y + 1);
     if ([self isPointOnMap:downPoint] && ![self isWalkableAtBoardPoint:downPoint]) {
-      [neighbors addObject:[NSValue valueWithCGPoint:CGPointMake(node.x + dx, node.y - dy)]];
+      [neighbors addObject:[NSValue valueWithCGPoint:CGPointMake(node.x + dx, node.y - 1)]];
     }
     if ([self isPointOnMap:upPoint] && ![self isWalkableAtBoardPoint:upPoint]) {
-      [neighbors addObject:[NSValue valueWithCGPoint:CGPointMake(node.x + dx, node.y + dy)]];
+      [neighbors addObject:[NSValue valueWithCGPoint:CGPointMake(node.x + dx, node.y + 1)]];
     }
 
   } else {
@@ -108,13 +108,13 @@
     }
 
     // Forced neighbors -- (x - dx, y) or (x + dx, y) have obstacles
-    CGPoint leftPoint = CGPointMake(node.x - dx, node.y);
-    CGPoint rightPoint = CGPointMake(node.x + dx, node.y);
+    CGPoint leftPoint = CGPointMake(node.x - 1, node.y);
+    CGPoint rightPoint = CGPointMake(node.x + 1, node.y);
     if ([self isPointOnMap:leftPoint] && ![self isWalkableAtBoardPoint:leftPoint]) {
-      [neighbors addObject:[NSValue valueWithCGPoint:CGPointMake(node.x - dx, node.y + dy)]];
+      [neighbors addObject:[NSValue valueWithCGPoint:CGPointMake(node.x - 1, node.y + dy)]];
     }
     if ([self isPointOnMap:rightPoint] && ![self isWalkableAtBoardPoint:rightPoint]) {
-      [neighbors addObject:[NSValue valueWithCGPoint:CGPointMake(node.x + dx, node.y + dy)]];
+      [neighbors addObject:[NSValue valueWithCGPoint:CGPointMake(node.x + 1, node.y + dy)]];
     }
   }
 
@@ -165,14 +165,14 @@
   } else if (dx) {
     // horizontal move
     // Forced neigbors -- (x, y - dy) or (x, y + dy) have obstacles
-    CGPoint upPoint = CGPointMake(node.x, node.y + dy);
-    CGPoint forcedUpPoint = CGPointMake(node.x + dx, node.y + dy);
+    CGPoint upPoint = CGPointMake(node.x, node.y + 1);
+    CGPoint forcedUpPoint = CGPointMake(node.x + dx, node.y + 1);
     if ([self isWalkableAtBoardPoint:forcedUpPoint] && ![self isWalkableAtBoardPoint:upPoint]) {
       return nodeValue;
     }
 
-    CGPoint downPoint = CGPointMake(node.x, node.y - dy);
-    CGPoint forcedDownPoint = CGPointMake(node.x + dx, node.y - dy);
+    CGPoint downPoint = CGPointMake(node.x, node.y - 1);
+    CGPoint forcedDownPoint = CGPointMake(node.x + dx, node.y - 1);
     if ([self isWalkableAtBoardPoint:forcedDownPoint] &&
         ![self isWalkableAtBoardPoint:downPoint]) {
       return nodeValue;
@@ -181,15 +181,15 @@
   } else {
     // vertical move
     // Forced neighbors -- (x - dx, y) or (x + dx, y) have obstacles
-    CGPoint leftPoint = CGPointMake(node.x - dx, node.y);
-    CGPoint forcedLeftPoint = CGPointMake(node.x - dx, node.y + dy);
+    CGPoint leftPoint = CGPointMake(node.x - 1, node.y);
+    CGPoint forcedLeftPoint = CGPointMake(node.x - 1, node.y + dy);
     if ([self isWalkableAtBoardPoint:forcedLeftPoint] &&
         ![self isWalkableAtBoardPoint:leftPoint]) {
       return nodeValue;
     }
 
-    CGPoint rightPoint = CGPointMake(node.x + dx, node.y);
-    CGPoint forcedRightPoint = CGPointMake(node.x + dx, node.y + dy);
+    CGPoint rightPoint = CGPointMake(node.x + 1, node.y);
+    CGPoint forcedRightPoint = CGPointMake(node.x + 1, node.y + dy);
     if ([self isWalkableAtBoardPoint:forcedRightPoint] &&
         ![self isWalkableAtBoardPoint:rightPoint]) {
       return nodeValue;
@@ -282,6 +282,7 @@
                                               heuristicMap:heuristicMap];
     CGPoint currentPoint = currentNodeValue.CGPointValue;
     if ([self isEndPoint:currentPoint]) {
+      NSLog(@"Did successfully reach end point");
       return;
     }
 
@@ -299,8 +300,8 @@
       [[NSNotificationCenter defaultCenter] postNotificationName:@"didAddToClosedSet"
                                                           object:currentNodeValue];
     }
-
   }
+  NSLog(@"Failed to find a path to end point");
 }
 
 - (double)euclideanDistanceBetweenA:(CGPoint)a andB:(CGPoint)b {
