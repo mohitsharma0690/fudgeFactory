@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		27E89BCC1C33085800986974 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E89BCB1C33085800986974 /* Node.swift */; };
+		27E89BCE1C3337D400986974 /* Graph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E89BCD1C3337D400986974 /* Graph.swift */; };
+		27E89BD01C333C8A00986974 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E89BCF1C333C8A00986974 /* Environment.swift */; };
 		4D30FD0C65A540C1B1A307AB /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7CD4BDBB6949AEB3F99151 /* libPods.a */; };
 		9104F23C188CE39900678D3C /* GameLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9104F23B188CE39900678D3C /* GameLayer.m */; };
 		9104F242188CE59B00678D3C /* tile.png in Resources */ = {isa = PBXBuildFile; fileRef = 9104F241188CE59B00678D3C /* tile.png */; };
@@ -35,6 +38,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		27E89BCA1C33085800986974 /* fudgeFactory-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fudgeFactory-Bridging-Header.h"; sourceTree = "<group>"; };
+		27E89BCB1C33085800986974 /* Node.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
+		27E89BCD1C3337D400986974 /* Graph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
+		27E89BCF1C333C8A00986974 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		553B74825DE3486B8AFAAFCD /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		5F7CD4BDBB6949AEB3F99151 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9104F23A188CE39900678D3C /* GameLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameLayer.h; sourceTree = "<group>"; };
@@ -93,6 +100,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		27E89BC91C33060A00986974 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				27E89BCB1C33085800986974 /* Node.swift */,
+				27E89BCA1C33085800986974 /* fudgeFactory-Bridging-Header.h */,
+				27E89BCD1C3337D400986974 /* Graph.swift */,
+				27E89BCF1C333C8A00986974 /* Environment.swift */,
+			);
+			path = Swift;
+			sourceTree = "<group>";
+		};
 		91DFEED9165999AC00F06C7E = {
 			isa = PBXGroup;
 			children = (
@@ -131,6 +149,7 @@
 		91DFEEFA165999AC00F06C7E /* fudgeFactory */ = {
 			isa = PBXGroup;
 			children = (
+				27E89BC91C33060A00986974 /* Swift */,
 				91DFF072165999AE00F06C7E /* AppDelegate.h */,
 				91DFF073165999AE00F06C7E /* AppDelegate.m */,
 				91DFF075165999AE00F06C7E /* HelloWorldLayer.h */,
@@ -211,6 +230,7 @@
 		91DFEEDB165999AC00F06C7E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = 91DFEEDE165999AC00F06C7E /* Build configuration list for PBXProject "fudgeFactory" */;
@@ -298,10 +318,13 @@
 				91DFF071165999AE00F06C7E /* main.m in Sources */,
 				91DFF074165999AE00F06C7E /* AppDelegate.m in Sources */,
 				91DFF077165999AE00F06C7E /* HelloWorldLayer.m in Sources */,
+				27E89BCC1C33085800986974 /* Node.swift in Sources */,
 				91DFF07A165999AE00F06C7E /* IntroLayer.m in Sources */,
 				9104F248188CF79B00678D3C /* GameController.m in Sources */,
+				27E89BCE1C3337D400986974 /* Graph.swift in Sources */,
 				9104F245188CF78E00678D3C /* GameObject.m in Sources */,
 				9104F23C188CE39900678D3C /* GameLayer.m in Sources */,
+				27E89BD01C333C8A00986974 /* Environment.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,6 +376,7 @@
 			baseConfigurationReference = 553B74825DE3486B8AFAAFCD /* Pods.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -360,8 +384,11 @@
 				GCC_PREFIX_HEADER = fudgeFactory/Prefix.pch;
 				INFOPLIST_FILE = fudgeFactory/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				"LIBRARY_SEARCH_PATHS[arch=*]" = "$(PODS_ROOT)/build/Debug-iphonesimulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "fudgeFactory/Swift/fudgeFactory-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -372,13 +399,16 @@
 			baseConfigurationReference = 553B74825DE3486B8AFAAFCD /* Pods.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fudgeFactory/Prefix.pch;
 				INFOPLIST_FILE = fudgeFactory/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "fudgeFactory/Swift/fudgeFactory-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
