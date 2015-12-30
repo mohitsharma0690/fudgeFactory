@@ -11,8 +11,9 @@ import Foundation
 class NodeInfo {
   var row: Int
   var col: Int
+  var isObstacle = false
 
-  init(WithRow row: Int, col: Int) {
+  init(row: Int, col: Int) {
     self.row = row
     self.col = col
   }
@@ -47,7 +48,15 @@ class Node : GraphNode {
   }
 
   var graphEdges: [GraphEdge] {
-    return edges
+    get {
+      return edges
+    }
+
+    set {
+      if let e = newValue as? [Edge] {
+        edges = e
+      }
+    }
   }
 }
 

@@ -14,9 +14,8 @@ protocol GraphNode {
   var id: Int { get }
   var row: Int { get }
   var col: Int {get}
-  var edges: [GraphEdge] { get }
   var successors: [Int] { get }
-
+  var graphEdges: [GraphEdge] { get set }
 }
 
 protocol GraphEdge {
@@ -43,7 +42,7 @@ class Graph {
   }
 
   func outEdges(node: GraphNode) -> [GraphEdge] {
-    return node.edges
+    return node.graphEdges
   }
 
   func nodeIdForPositionWithRow(row: Int, col: Int) -> Int? {
@@ -69,11 +68,12 @@ class Graph {
     self.width = width
     self.height = height
 
-    let nodes = walkability.map { (point, _) -> Node in
+    let nodes = walkability.map { (point, isWalkable) -> Node in
       let p = point.CGPointValue()
       let x = Int(p.x)
       let y = Int(p.y)
-      let info = NodeInfo(WithRow: x, col: y)
+      let info = NodeInfo(row: x, col: y)
+      info.isObstacle = isWalkable
       return Node(WithId: nodeIdForPositionWithRow(x, col: y)!, info: info)
     }
 
@@ -92,13 +92,14 @@ class Graph {
 
         edges = edges.filter { $0 != nil }
 
-        let node = nodesById[nodeId]
-        node.edges = edges.map { (e) -> Edge in
+        var node = nodesById[nodeId]
+        node?.graphEdges = edges.map { (e) -> Edge in
           let edgeInfo = EdgeInfo(WithCost: 1)
           return Edge(toNode: e!, info: edgeInfo)
         }
 
       }
+
     }
   }
 }
