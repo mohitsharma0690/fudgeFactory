@@ -17,6 +17,8 @@ class Entrance {
   var col: Int
   var cluster1Id: Int
   var cluster2Id: Int
+  var center1Id: Int
+  var center2Id: Int
   var centerRow: Int
   var centerCol: Int
   var len: Int
@@ -24,12 +26,14 @@ class Entrance {
 
   init(id: Int, row: Int, col: Int, cluster1Id: Int,
     cluster2Id: Int, centerRow: Int, centerCol: Int,
-    len: Int, isHorizontal: Bool) {
+    center1Id: Int, center2Id: Int, len: Int, isHorizontal: Bool) {
       self.id = id
       self.row = row
       self.col = col
       self.cluster1Id = cluster1Id
       self.cluster2Id = cluster2Id
+      self.center1Id = center1Id
+      self.center2Id = center2Id
       self.centerRow = centerRow
       self.centerCol = centerCol
       self.len = len
@@ -51,15 +55,21 @@ class Cluster {
   var startCol: Int
   var width: Int
   var height: Int
-  var entrances: [Entrance]
+  private(set) var entrances: [Entrance] = []
 
-  init(id: Int, row: Int, col: Int, width: Int, height: Int, entrances: [Entrance]) {
+  init(id: Int, world: World, row: Int, col: Int, width: Int, height: Int) {
     self.id = id
     self.startRow = row
     self.startCol = col
     self.width = width
     self.height = height
-    self.entrances = entrances
   }
 
+  func addEntrance(entrance: Entrance) {
+    entrances.append(entrance)
+  }
+
+  func addEntrances(e: [Entrance]) {
+    entrances.appendContentsOf(e)
+  }
 }

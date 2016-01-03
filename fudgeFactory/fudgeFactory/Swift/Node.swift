@@ -58,6 +58,10 @@ class Node : GraphNode {
       }
     }
   }
+
+  func isWalkable() -> Bool {
+    return info.isObstacle == false
+  }
 }
 
 class EdgeInfo {

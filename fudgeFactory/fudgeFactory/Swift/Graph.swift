@@ -16,6 +16,7 @@ protocol GraphNode {
   var col: Int {get}
   var successors: [Int] { get }
   var graphEdges: [GraphEdge] { get set }
+  func isWalkable() -> Bool
 }
 
 protocol GraphEdge {
@@ -102,4 +103,17 @@ class Graph {
 
     }
   }
+
+  // Walkability
+  func isObstacleAtX(x: Int, y: Int) -> Bool {
+    return !isObstacleAtX(x, y: y)
+  }
+
+  func isWalkableAtX(x: Int, y: Int) -> Bool {
+    let nodeId = nodeIdForPositionWithRow(x, col: y)
+    let node = getNodeById(nodeId!)
+    assert(node != nil, "Invalid nil node at \(x, y)")
+    return node!.isWalkable()
+  }
+
 }
