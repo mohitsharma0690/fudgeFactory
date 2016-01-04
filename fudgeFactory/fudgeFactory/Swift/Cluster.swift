@@ -8,8 +8,9 @@
 
 import Foundation
 
-let CLUSTER_WIDTH: Int = 10
-let CLUSTER_HEIGHT: Int = 10
+// For more realistic grids this should be larger.
+let CLUSTER_WIDTH: Int = 5
+let CLUSTER_HEIGHT: Int = 5
 
 class Entrance {
   var id: Int

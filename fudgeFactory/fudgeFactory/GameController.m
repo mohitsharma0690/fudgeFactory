@@ -15,10 +15,12 @@
 
 @interface GameController ()
 
+@property(nonatomic, readwrite, strong) Environment *env;
 @property (nonatomic, readwrite, strong) GameObject *gameObject;
 @property (nonatomic, readwrite, weak) GameLayer *gameLayer;
 
 // used for resetting
+@property (nonatomic, readwrite, assign) BOOL didImportToSwift;
 @property (nonatomic, readwrite, assign) BOOL didColorCellsForDebugging;
 @property (nonatomic, readwrite, assign) int cellsToColor;
 @property (nonatomic, readwrite, assign) BOOL didPerformSearch;
@@ -32,27 +34,21 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
 }
 
 + (GameController *)createGame {
-  GameObject *gameObject = [[GameObject alloc] initWithBoardWidth:30 height:30];
+  GameObject *gameObject = [[GameObject alloc] initWithBoardWidth:20 height:20];
   GameController *gameController = [[GameController alloc] initWithGameObject:gameObject];
-
-  // TODO(mosharma): This should be done once we want to start the search after setting up
-  // the environment. Each search would reset this later on.
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)),
-                 dispatch_get_main_queue(), ^{
-                     [self importGameObjectToSwift:gameObject];
-                 });
 
   return gameController;
 }
 
-+ (void)importGameObjectToSwift:(GameObject *)gameObject {
+- (void)importGameObjectToSwift:(GameObject *)gameObject {
   Graph *graph = [[Graph alloc] init];
   [graph createGraphFromWalkabilityMap:[gameObject walkabilityMap]
                                  width:gameObject.width
                                 height:gameObject.height];
 
-  Environment *env = [[Environment alloc] init];
-  World *world = [[World alloc] initWithEnv:env graph:graph];
+  self.env = [[Environment alloc] init];
+  self.env.DEBUG_COLOR_ENTRANCES = YES;
+  World *world = [[World alloc] initWithEnv:self.env graph:graph];
   [world createAbstractGraph];
 }
 
@@ -139,7 +135,24 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
 
 #pragma mark - Touch Callbacks
 
+- (BOOL)shouldDoDebugThings {
+  if (self.env.DEBUG_COLOR_ENTRANCES) {
+    return YES;
+  }
+  return NO;
+}
+
 - (void)didTapGoButton {
+
+  if (!self.didImportToSwift) {
+    [self importGameObjectToSwift:self.gameObject];
+    self.didImportToSwift = YES;
+  }
+
+  if ([self shouldDoDebugThings]) {
+    return;
+  }
+
   if (self.cellsToColor == 0 && !self.didPerformSearch) {
     [self.gameObject startSearchForPath];
   } else if (self.cellsToColor == 0 && self.didPerformSearch) {

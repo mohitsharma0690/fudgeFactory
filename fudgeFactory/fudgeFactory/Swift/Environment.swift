@@ -10,8 +10,10 @@ import Foundation
 
 class Environment: NSObject {
 
+  var DEBUG_COLOR_ENTRANCES = false
+
   func heuristicBetweenStart(start: Node, target: Node) -> Int {
     return 0
   }
-  
+
 }

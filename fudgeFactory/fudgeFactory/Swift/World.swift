@@ -45,27 +45,26 @@ class World : NSObject {
       for currRow in 0.stride(to: graph.width, by: CLUSTER_WIDTH) {
         let width = min(CLUSTER_WIDTH, graph.width - currRow)
         let height = min(CLUSTER_HEIGHT, graph.height - currCol)
-        // TODO(mohit): Add entrances here
         let cluster = Cluster(id: clusterId, world: self, row: currRow,
           col: currCol, width: width, height: height)
         clusters.append(cluster)
         clusterId += 1
 
-        if currRow + width < graph.width {
+        if currRow + height < graph.height {
           // create horizontal entrances
           let entrances =
-          createHorizontalEntrancesForRow(currRow + height - 1, colStart: currCol,
-            colEnd: currCol + width - 1, clusterRow: row, clusterCol: col,
-            entranceId: &entranceId)
+            createHorizontalEntrancesForRow(currRow + height - 1, colStart: currCol,
+              colEnd: currCol + width - 1, clusterRow: row, clusterCol: col,
+              entranceId: &entranceId)
           cluster.addEntrances(entrances)
         }
 
-        if currCol > 0 {
+        if currCol + width < graph.width  {
           // create vertical entrances
           let entrances =
-          createVerticalEntrancesForCol(currCol + width - 1, rowStart: currRow,
-            rowEnd: currRow + height - 1, clusterRow: row, clusterCol: col,
-            entranceId: &entranceId)
+            createVerticalEntrancesForCol(currCol + width - 1, rowStart: currRow,
+              rowEnd: currRow + height - 1, clusterRow: row, clusterCol: col,
+              entranceId: &entranceId)
           cluster.addEntrances(entrances)
         }
 
@@ -78,6 +77,9 @@ class World : NSObject {
     for cluster in clusters {
       let allEntrancePoints = cluster.entrances.reduce([Point]()) {
         (var points: [Point], e: Entrance) -> [Point] in
+        if !e.isHorizontal {
+          return points;
+        }
         let n1 = graph.getNodeById(e.center1Id)! as! Node
         let n2 = graph.getNodeById(e.center2Id)! as! Node
         points.append(n1.toPoint)

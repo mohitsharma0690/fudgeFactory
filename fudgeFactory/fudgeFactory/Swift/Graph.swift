@@ -74,7 +74,7 @@ class Graph : NSObject {
       let x = Int(p.x)
       let y = Int(p.y)
       let info = NodeInfo(row: x, col: y)
-      info.isObstacle = isWalkable
+      info.isObstacle = !isWalkable
       return Node(WithId: nodeIdForPositionWithRow(x, col: y)!, info: info)
     }
 
@@ -92,12 +92,18 @@ class Graph : NSObject {
         })
 
         edges = edges.filter { $0 != nil }
-
-        var node = nodesById[nodeId]
-        node?.graphEdges = edges.map { (e) -> Edge in
+        let ge = edges.map { (e) -> Edge in
           let edgeInfo = EdgeInfo(WithCost: 1)
           return Edge(toNode: e!, info: edgeInfo)
         }
+        var node = nodesById[nodeId]!
+        node.graphEdges = ge.map { $0 as GraphEdge }
+        // Umm. Interestingly this fails.
+        // An array of Edges is not really an array of GraphEdges.
+//        node.graphEdges = edges.map { (e) -> Edge in
+//          let edgeInfo = EdgeInfo(WithCost: 1)
+//          return Edge(toNode: e!, info: edgeInfo)
+//        }
 
       }
 
