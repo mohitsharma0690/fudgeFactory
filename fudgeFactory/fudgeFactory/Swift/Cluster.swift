@@ -73,4 +73,5 @@ class Cluster {
   func addEntrances(e: [Entrance]) {
     entrances.appendContentsOf(e)
   }
+
 }

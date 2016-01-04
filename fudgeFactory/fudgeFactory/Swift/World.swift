@@ -13,7 +13,8 @@ import UIKit
 class World : NSObject {
 
   var graph: Graph
-  var absGraphs: [AbsGraph] = []
+  var absGraph: AbsGraph?
+  var clusters: [Cluster] = [Cluster]()
 
   var env: Environment
 
@@ -22,16 +23,27 @@ class World : NSObject {
     self.graph = graph
   }
 
+  func clusterIdForRow(row: Int, col: Int) -> Int {
+    assert(row >= 0 && row < graph.width && col >= 0 && col < graph.height)
+
+    var clustersPerRow = graph.width / CLUSTER_HEIGHT
+    if graph.width % CLUSTER_HEIGHT != 0 {
+      clustersPerRow += 1
+    }
+    return (row / CLUSTER_HEIGHT) * clustersPerRow + (col / CLUSTER_WIDTH)
+  }
+
   func createAbstractGraph() {
     // create clusters
-    createClusters()
-    // create entrances in clusters
+    clusters = createClusters()
+    linkClustersWithEntrances()
+
     // create the abstract graph using each local entrance as two nodes in the abstract
     // graph
     // find and cache paths between entrances in clusters
   }
 
-  private func createClusters() {
+  private func createClusters() -> [Cluster] {
     var clusterId = 0
     var entranceId = 0
     var row = 0, col = 0
@@ -40,9 +52,9 @@ class World : NSObject {
     // |6|7|8|
     // |3|4|5|
     // |0|1|2|
-    for currCol in 0.stride(to: graph.height, by: CLUSTER_HEIGHT) {
+    for currRow in 0.stride(to: graph.height, by: CLUSTER_HEIGHT) {
       col = 0
-      for currRow in 0.stride(to: graph.width, by: CLUSTER_WIDTH) {
+      for currCol in 0.stride(to: graph.width, by: CLUSTER_WIDTH) {
         let width = min(CLUSTER_WIDTH, graph.width - currRow)
         let height = min(CLUSTER_HEIGHT, graph.height - currCol)
         let cluster = Cluster(id: clusterId, world: self, row: currRow,
@@ -93,6 +105,7 @@ class World : NSObject {
         userInfo: ["nodes": points])
     }
 
+    return clusters
   }
 
   func createVerticalEntrancesForCol(col: Int, rowStart: Int, rowEnd: Int,
@@ -168,6 +181,22 @@ class World : NSObject {
       }
 
       return entrances
+  }
+
+  func linkClustersWithEntrances() {
+    let width = graph.width
+
+    for cluster in clusters {
+      for entrance in cluster.entrances {
+        let cl1Id = cluster.id
+        var cl2Id = cl1Id + 1
+        if entrance.isHorizontal {
+          cl2Id = cl1Id + (width / CLUSTER_WIDTH)
+        }
+        entrance.cluster1Id = cl1Id
+        entrance.cluster2Id = cl2Id
+      }
+    }
   }
 
 }
