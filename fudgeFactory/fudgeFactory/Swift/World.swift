@@ -73,26 +73,25 @@ class World : NSObject {
       row += 1
     }
 
-    var entrancePoints = [Point]()
-    for cluster in clusters {
-      let allEntrancePoints = cluster.entrances.reduce([Point]()) {
-        (var points: [Point], e: Entrance) -> [Point] in
-        if !e.isHorizontal {
-          return points;
+    if env.DEBUG_COLOR_ENTRANCES {
+      var entrancePoints = [Point]()
+      for cluster in clusters {
+        let allEntrancePoints = cluster.entrances.reduce([Point]()) {
+          (var points: [Point], e: Entrance) -> [Point] in
+          let n1 = graph.getNodeById(e.center1Id)! as! Node
+          let n2 = graph.getNodeById(e.center2Id)! as! Node
+          points.append(n1.toPoint)
+          points.append(n2.toPoint)
+          return points
         }
-        let n1 = graph.getNodeById(e.center1Id)! as! Node
-        let n2 = graph.getNodeById(e.center2Id)! as! Node
-        points.append(n1.toPoint)
-        points.append(n2.toPoint)
-        return points
+        entrancePoints.appendContentsOf(allEntrancePoints)
       }
-      entrancePoints.appendContentsOf(allEntrancePoints)
+      let points = entrancePoints.map { NSValue(CGPoint:$0.toCGPoint()) }
+      NSNotificationCenter.defaultCenter().postNotificationName(
+        "colorNodes",
+        object: nil,
+        userInfo: ["nodes": points])
     }
-    let points = entrancePoints.map { NSValue(CGPoint:$0.toCGPoint()) }
-    NSNotificationCenter.defaultCenter().postNotificationName(
-      "colorNodes",
-      object: nil,
-      userInfo: ["nodes": points])
 
   }
 
