@@ -8,9 +8,10 @@
 
 import Foundation
 
-class Environment {
+class Environment: NSObject {
 
   func heuristicBetweenStart(start: Node, target: Node) -> Int {
     return 0
   }
+  
 }

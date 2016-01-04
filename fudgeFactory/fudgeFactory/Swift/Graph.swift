@@ -25,7 +25,7 @@ protocol GraphEdge {
   var toNode: Int { get }
 }
 
-class Graph {
+class Graph : NSObject {
 
   var nodesById = [Int: GraphNode]()
   var width = 0

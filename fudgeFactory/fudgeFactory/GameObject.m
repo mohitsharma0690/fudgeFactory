@@ -38,6 +38,10 @@
     return self;
 }
 
+- (NSDictionary<NSValue *, NSNumber *> *)walkabilityMap {
+  return self.gridWalkabilityMap;
+}
+
 #pragma mark - Jump Point Search
 
 - (NSArray *)jumpPointNeighborsForNode:(CGPoint)node withParent:(CGPoint)parent {

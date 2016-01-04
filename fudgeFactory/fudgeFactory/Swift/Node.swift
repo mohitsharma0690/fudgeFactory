@@ -7,6 +7,21 @@
 //
 
 import Foundation
+import UIKit
+
+struct Point {
+  var x: Int
+  var y: Int
+
+  init(X x: Int, y: Int) {
+    self.x = x
+    self.y = y
+  }
+
+  func toCGPoint() -> CGPoint {
+    return CGPointMake(CGFloat(x), CGFloat(y))
+  }
+}
 
 class NodeInfo {
   var row: Int
@@ -39,6 +54,10 @@ class Node : GraphNode {
 
   var col: Int {
     return info.col
+  }
+
+  var toPoint: Point {
+    return Point(X: row, y: col)
   }
 
   var successors: [Int] {

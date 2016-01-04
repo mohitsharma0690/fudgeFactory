@@ -21,6 +21,8 @@
 
 - (void)startSearchForPath;
 
+- (NSDictionary<NSValue *, NSNumber *> *)walkabilityMap;
+
 #pragma mark - State
 
 - (BOOL)isValidStartPoint:(CGPoint)startPoint;
