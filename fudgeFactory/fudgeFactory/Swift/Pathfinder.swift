@@ -24,19 +24,19 @@ protocol AStarNode : Comparable {
 protocol OpenList {
   typealias N
 
-  func isEmpty() -> Bool
+  var isEmpty: Bool { get }
   func addNode(node: N)
   func removeNodeWith(nodeId: Int) -> Bool
   // Returns the top most node from the open list
   func pop() -> N
-  func searchNodeWith(nodeId: Int) -> N?
+  func nodeWithId(nodeId: Int) -> N?
   var count: Int { get }
 }
 
 class OpenListArray<NODE: AStarNode> : OpenList {
   var list = [NODE]()
 
-  func isEmpty() -> Bool {
+  var isEmpty: Bool {
     return list.isEmpty
   }
 
@@ -46,6 +46,10 @@ class OpenListArray<NODE: AStarNode> : OpenList {
 
   func addNode(node: NODE) {
     list.append(node)
+  }
+
+  func addNodes(nodes: [NODE]) {
+    list.appendContentsOf(nodes)
   }
 
   func removeNodeWith(nodeId: Int) -> Bool {
@@ -67,7 +71,7 @@ class OpenListArray<NODE: AStarNode> : OpenList {
     return node!
   }
 
-  func searchNodeWith(nodeId: Int) -> NODE? {
+  func nodeWithId(nodeId: Int) -> NODE? {
     let l = list.filter { $0.id == nodeId }
     assert(l.count <= 1, "Multiple similar nodes in OpenList")
     guard l.count > 0 else {
@@ -77,7 +81,80 @@ class OpenListArray<NODE: AStarNode> : OpenList {
   }
 }
 
-/* class AStar : Pathfinder {
+protocol ClosedList {
+  typealias N
+  var isEmpty: Bool { get }
+  func nodeWithId(nodeId: Int) -> N?
+  func add(node: N)
+  func remove(node: N) -> Bool
+
+  func pathFrom(from: Int, to: Int) -> [N]?
+}
+
+extension ClosedList where N: AStarNode {
+
+  func pathFrom(from:Int, to: Int) -> [Self.N]? {
+    guard from != to else {
+      return []
+    }
+    // If from doesn't exist return nil.
+    let fromNode = nodeWithId(from)
+    guard let f_node = fromNode else {
+      return nil
+    }
+    // If to doesn't exist return nil.
+    var currNode = nodeWithId(to)
+    guard var node = currNode else {
+      return nil
+    }
+    var path = Array<N>()
+    while from != node.id {
+      path.append(node)
+      currNode = nodeWithId(node.parent)
+      if currNode == nil {
+        return nil
+      }
+      node = currNode!
+    }
+
+    path.append(f_node)
+    return path.reverse()
+  }
+}
+
+class ClosedListArray<NODE: AStarNode> : ClosedList {
+  var list = [NODE]()
+
+  var isEmpty: Bool {
+    return list.isEmpty
+  }
+
+  func add(node: NODE) {
+    list.append(node)
+  }
+
+  func nodeWithId(nodeId: Int) -> NODE? {
+    let nodes = list.filter { $0.id == nodeId }
+    guard nodes.count > 0 else {
+      return nil
+    }
+    assert(nodes.count == 1)
+    return nodes[0]
+  }
+
+  func remove(node: NODE) -> Bool {
+    let nodeIdx = list.indexOf(node)
+    guard let idx = nodeIdx else {
+      return false
+    }
+    list.removeAtIndex(idx)
+    return true
+  }
+
+}
+/*
+class AStar : Pathfinder {
 
 }
 */
+
