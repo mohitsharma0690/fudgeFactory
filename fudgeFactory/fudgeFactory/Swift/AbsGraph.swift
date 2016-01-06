@@ -29,18 +29,18 @@ struct AbsNodeInfo {
   var clusterId: Int
   var row: Int  // The actual row in the original graph
   var col: Int  // The actual col in the original graph
-  var centerId: Int  // nodeId for the center node of the entrance
+  var nodeId: Int  // nodeId for the center node of the entrance
 
-  init(clusterId: Int, row: Int, col: Int, centerId: Int) {
+  init(clusterId: Int, row: Int, col: Int, nodeId: Int) {
     self.clusterId = clusterId
     self.row = row
     self.col = col
-    self.centerId = centerId
+    self.nodeId = nodeId
   }
 
   var graphNodeId: Int {
     // TODO(Mohit): This would change based on levels.
-    return centerId
+    return nodeId
   }
 
 }
@@ -67,7 +67,7 @@ class AbsEdgeInfo {
 }
 
 class AbsGraph {
-  private(set) var nodes = [AbsNode]()
+  var nodes = [AbsNode]()
   var graph: Graph
 
   init(graph: Graph) {

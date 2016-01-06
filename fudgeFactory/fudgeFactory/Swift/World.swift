@@ -15,6 +15,7 @@ class World : NSObject {
   var graph: Graph
   var absGraph: AbsGraph?
   var clusters: [Cluster] = [Cluster]()
+  var nodeIdToAbsNodeId = [Int: Int]()
 
   var env: Environment
 
@@ -37,6 +38,9 @@ class World : NSObject {
     // create clusters
     clusters = createClusters()
     linkClustersWithEntrances()
+
+    absGraph = createAbstractGraph()
+    addNodesToAbstractGraph()
 
     // create the abstract graph using each local entrance as two nodes in the abstract
     // graph
@@ -199,4 +203,40 @@ class World : NSObject {
     }
   }
 
+  func createAbstractGraph() -> AbsGraph {
+    let absGraph = AbsGraph(graph: graph)
+    return absGraph;
+  }
+
+  func addNodesToAbstractGraph() {
+    assert(absGraph != nil)
+    var absNodeId = 0
+    var absNodes = [AbsNode]()
+    for cluster in clusters {
+      for entrance in cluster.entrances {
+
+        let node1Info = AbsNodeInfo(clusterId: entrance.cluster1Id,
+          row: entrance.center1Row, col: entrance.center1Col,
+          nodeId: entrance.center1Id)
+        let node1 = AbsNode(id: absNodeId, info: node1Info)
+        nodeIdToAbsNodeId[entrance.center1Id] = absNodeId
+        absNodes.append(node1)
+
+        absNodeId += 1
+
+        let node2Info = AbsNodeInfo(clusterId: entrance.cluster2Id,
+          row: entrance.center2Row, col: entrance.center2Col,
+          nodeId: entrance.center2Id)
+        let node2 = AbsNode(id: absNodeId, info: node2Info)
+        nodeIdToAbsNodeId[entrance.center2Id] = absNodeId
+        absNodes.append(node2)
+
+        absNodeId += 1
+      }
+    }
+    absGraph!.nodes = absNodes
+  }
+
+  func computeLocalEntrancePaths() {
+  }
 }
