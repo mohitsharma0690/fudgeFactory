@@ -216,7 +216,8 @@ class World : NSObject {
       for entrance in cluster.entrances {
 
         let node1Info = AbsNodeInfo(clusterId: entrance.cluster1Id,
-          row: entrance.center1Row, col: entrance.center1Col,
+          row: entrance.center1Row - cluster.startRow,
+          col: entrance.center1Col - cluster.startCol,
           nodeId: entrance.center1Id)
         let node1 = AbsNode(id: absNodeId, info: node1Info)
         nodeIdToAbsNodeId[entrance.center1Id] = absNodeId
@@ -225,7 +226,8 @@ class World : NSObject {
         absNodeId += 1
 
         let node2Info = AbsNodeInfo(clusterId: entrance.cluster2Id,
-          row: entrance.center2Row, col: entrance.center2Col,
+          row: entrance.center2Row - cluster.startRow,
+          col: entrance.center2Col - cluster.startCol,
           nodeId: entrance.center2Id)
         let node2 = AbsNode(id: absNodeId, info: node2Info)
         nodeIdToAbsNodeId[entrance.center2Id] = absNodeId
