@@ -61,9 +61,7 @@ class Node : GraphNode {
   }
 
   var successors: [Int] {
-    return edges.map({ (e: Edge) -> Int in
-      return e.toNode
-    })
+    return edges.map { $0.toNode }
   }
 
   var graphEdges: [GraphEdge] {
@@ -84,9 +82,9 @@ class Node : GraphNode {
 }
 
 class EdgeInfo {
-  var cost: Int
+  var cost: Float
 
-  init(WithCost cost: Int) {
+  init(WithCost cost: Float) {
     self.cost = cost
   }
 }
@@ -100,7 +98,7 @@ class Edge : GraphEdge {
     self.info = info
   }
 
-  var cost: Int {
+  var cost: Float {
     return info.cost
   }
 }

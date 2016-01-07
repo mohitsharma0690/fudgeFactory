@@ -16,12 +16,35 @@ class World : NSObject {
   var absGraph: AbsGraph?
   var clusters: [Cluster] = [Cluster]()
   var nodeIdToAbsNodeId = [Int: Int]()
+  var astarNodesByNodeId = [Int: GraphAStarNode]()
 
   var env: Environment
 
   init(env: Environment, graph: Graph) {
     self.env = env
     self.graph = graph
+  }
+
+  func canMoveFrom(from: GraphNode, toAdjacent to: GraphNode) -> Bool {
+    guard to.isWalkable() else {
+      return false
+    }
+    // TODO(Mohit): Diagnol movement with the adjacent nodes occupied
+    // should also theoretically be avoided.
+    return true
+  }
+
+  func astarNodeForGraphNode(graphNode: GraphNode) -> GraphAStarNode {
+    guard let node = astarNodesByNodeId[graphNode.id] else {
+      let astarNode = GraphAStarNode(node: graphNode)
+      astarNodesByNodeId[graphNode.id] = astarNode
+      return astarNode
+    }
+    return node
+  }
+
+  func graphNodeForAstarNode(astarNode: GraphAStarNode) -> GraphNode {
+    return astarNode.node
   }
 
   func clusterIdForRow(row: Int, col: Int) -> Int {

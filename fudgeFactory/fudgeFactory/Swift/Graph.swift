@@ -21,7 +21,7 @@ protocol GraphNode {
 
 protocol GraphEdge {
 
-  var cost: Int { get }
+  var cost: Float { get }
   var toNode: Int { get }
 }
 

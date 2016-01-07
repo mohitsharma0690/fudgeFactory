@@ -16,9 +16,10 @@ protocol Pathfinder {
 protocol AStarNode : Comparable {
   var id: Int { get }
   var parent: Int? { get set }
-  var g: Int { get set }
-  var h: Int { get set }
-  var f: Int { get }
+  var g: Float { get set }  // Actual distance
+  var h: Float { get set }  // Heuristic distance
+  var f: Float { get }
+  func reset()
 }
 
 func ==<T: AStarNode>(lhs: T, rhs: T) -> Bool {
@@ -30,7 +31,7 @@ func <<T: AStarNode>(lhs: T, rhs: T) -> Bool{
 }
 
 extension AStarNode {
-  var f: Int {
+  var f: Float {
     return g + h
   }
 }
@@ -45,9 +46,12 @@ protocol OpenList {
   var count: Int { get }
   func addNode(node: ItemType)
   func removeNodeWith(nodeId: Int) -> Bool
-  // Returns the top most node from the open list
+  /// Returns the top most node from the open list
   func pop() -> ItemType
+  /// Did update node in OpenList. Maybe reheapify or something.
+  func didUpdateNode(node: ItemType)
   func nodeWithId(nodeId: Int) -> ItemType?
+  func reset()
 }
 
 class AnyOpenList<T> : OpenList {
@@ -58,7 +62,9 @@ class AnyOpenList<T> : OpenList {
   let _addNode: (T -> Void)
   let _removeNodeWithId: (Int -> Bool)
   let _pop: (Void -> T)
+  let _didUpateNode: (T -> Void)
   let _nodeWithId: (Int -> T?)
+  let _reset: Void -> Void
 
   init<U: OpenList where U.ItemType == T>(_ u: U) {
     _isEmpty = u.isEmpty
@@ -66,7 +72,9 @@ class AnyOpenList<T> : OpenList {
     _addNode = u.addNode
     _removeNodeWithId = u.removeNodeWith
     _pop = u.pop
+    _didUpateNode = u.didUpdateNode
     _nodeWithId = u.nodeWithId
+    _reset = u.reset
   }
 
   var isEmpty: Bool { return _isEmpty }
@@ -84,10 +92,17 @@ class AnyOpenList<T> : OpenList {
     return _pop()
   }
 
+  func didUpdateNode(node: T) {
+    _didUpateNode(node)
+  }
+
   func nodeWithId(nodeId: Int) -> T? {
     return _nodeWithId(nodeId)
   }
 
+  func reset() {
+    _reset()
+  }
 }
 
 class OpenListArray<NODE: AStarNode> : OpenList {
@@ -129,6 +144,10 @@ class OpenListArray<NODE: AStarNode> : OpenList {
     return node!
   }
 
+  func didUpdateNode(node: NODE) {
+    // Do nothing.
+  }
+
   func nodeWithId(nodeId: Int) -> NODE? {
     let l = list.filter { $0.id == nodeId }
     assert(l.count <= 1, "Multiple similar nodes in OpenList")
@@ -137,6 +156,14 @@ class OpenListArray<NODE: AStarNode> : OpenList {
     }
     return l[0]
   }
+
+  func reset() {
+    for node in list {
+      node.reset()
+    }
+    list.removeAll()
+  }
+
 }
 
 enum ClosedListImplType {
@@ -149,8 +176,8 @@ protocol ClosedList {
   func nodeWithId(nodeId: Int) -> ItemType?
   func add(node: ItemType)
   func remove(node: ItemType) -> Bool
-
   func pathFrom(from: Int, to: Int) -> [ItemType]?
+  func reset()
 }
 
 class AnyClosedList<T> : ClosedList {
@@ -161,6 +188,7 @@ class AnyClosedList<T> : ClosedList {
   let _add: (ItemType -> Void)
   let _remove: (ItemType -> Bool)
   let _pathFrom: (Int, Int) -> [ItemType]?
+  let _reset: Void -> Void
 
   init<U: ClosedList where U.ItemType == T>(_ u: U) {
     _isEmpty = u.isEmpty
@@ -168,6 +196,7 @@ class AnyClosedList<T> : ClosedList {
     _add = u.add
     _remove = u.remove
     _pathFrom = u.pathFrom
+    _reset = u.reset
   }
 
   var isEmpty: Bool { return _isEmpty }
@@ -186,6 +215,10 @@ class AnyClosedList<T> : ClosedList {
 
   func pathFrom(from: Int, to: Int) -> [T]? {
     return _pathFrom(from, to)
+  }
+
+  func reset() {
+    _reset()
   }
 }
 
@@ -250,6 +283,13 @@ class ClosedListArray<NODE: AStarNode> : ClosedList {
     }
     list.removeAtIndex(idx)
     return true
+  }
+
+  func reset() {
+    for node in list {
+      node.reset()
+    }
+    list.removeAll()
   }
 
 }
