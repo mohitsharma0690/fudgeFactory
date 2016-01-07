@@ -55,12 +55,12 @@ class AnyOpenList<T> : OpenList {
 
   let _isEmpty: Bool
   let _count: Int
-  let _addNode: (node: T) -> ()
-  let _removeNodeWithId: (nodeId: Int) -> Bool
-  let _pop: () -> T
-  let _nodeWithId: (nodeId: Int) -> T?
+  let _addNode: (T -> Void)
+  let _removeNodeWithId: (Int -> Bool)
+  let _pop: (Void -> T)
+  let _nodeWithId: (Int -> T?)
 
-  init<U: OpenList where U.N == T>(u: U) {
+  init<U: OpenList where U.N == T>(_ u: U) {
     _isEmpty = u.isEmpty
     _count = u.count
     _addNode = u.addNode
@@ -73,11 +73,11 @@ class AnyOpenList<T> : OpenList {
   var count: Int { return _count }
 
   func addNode(node: N) {
-    _addNode(node: node)
+    _addNode(node)
   }
 
   func removeNodeWith(nodeId: Int) -> Bool {
-    return _removeNodeWithId(nodeId: nodeId)
+    return _removeNodeWithId(nodeId)
   }
 
   func pop() -> T {
@@ -85,12 +85,13 @@ class AnyOpenList<T> : OpenList {
   }
 
   func nodeWithId(nodeId: Int) -> T? {
-    return _nodeWithId(nodeId: nodeId)
+    return _nodeWithId(nodeId)
   }
 
 }
 
 class OpenListArray<NODE: AStarNode> : OpenList {
+  typealias N = NODE
   var list = [NODE]()
 
   var isEmpty: Bool {
@@ -143,18 +144,54 @@ enum ClosedListImplType {
 }
 
 protocol ClosedList {
-  typealias N
+  typealias ItemType
   var isEmpty: Bool { get }
-  func nodeWithId(nodeId: Int) -> N?
-  func add(node: N)
-  func remove(node: N) -> Bool
+  func nodeWithId(nodeId: Int) -> ItemType?
+  func add(node: ItemType)
+  func remove(node: ItemType) -> Bool
 
-  func pathFrom(from: Int, to: Int) -> [N]?
+  func pathFrom(from: Int, to: Int) -> [ItemType]?
 }
 
-extension ClosedList where N: AStarNode {
+class AnyClosedList<T> : ClosedList {
+  typealias ItemType = T
 
-  func pathFrom(from:Int, to: Int) -> [Self.N]? {
+  let _isEmpty: Bool
+  let _nodeWithId: (Int -> T?)
+  let _add: (ItemType -> Void)
+  let _remove: (ItemType -> Bool)
+  let _pathFrom: (Int, Int) -> [ItemType]?
+
+  init<U: ClosedList where U.ItemType == T>(_ u: U) {
+    _isEmpty = u.isEmpty
+    _nodeWithId = u.nodeWithId
+    _add = u.add
+    _remove = u.remove
+    _pathFrom = u.pathFrom
+  }
+
+  var isEmpty: Bool { return _isEmpty }
+
+  func nodeWithId(nodeId: Int) -> T? {
+    return _nodeWithId(nodeId)
+  }
+
+  func add(node: ItemType) {
+    return _add(node)
+  }
+
+  func remove(node: ItemType) -> Bool {
+    return _remove(node)
+  }
+
+  func pathFrom(from: Int, to: Int) -> [T]? {
+    return _pathFrom(from, to)
+  }
+}
+
+extension ClosedList where ItemType: AStarNode {
+
+  func pathFrom(from:Int, to: Int) -> [ItemType]? {
     guard from != to else {
       return []
     }
@@ -168,7 +205,7 @@ extension ClosedList where N: AStarNode {
     guard var node = currNode else {
       return nil
     }
-    var path = Array<N>()
+    var path = Array<ItemType>()
     while from != node.id {
       path.append(node)
       guard let parent = node.parent else {

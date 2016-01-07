@@ -28,19 +28,19 @@ class GraphAStarNode: AStarNode {
 class AStar : Pathfinder {
 
   private var env: Environment
-  private var openList: OpenList
-  private var closedList: ClosedList
+  private var openList: AnyOpenList<GraphAStarNode>
+  private var closedList: AnyClosedList<GraphAStarNode>
 
   init(env: Environment) {
     self.env = env
     switch env.openListImpl {
     case OpenListImplType.OpenListArray:
-      openList = OpenListArray<GraphAStarNode>()
+      openList = AnyOpenList(OpenListArray<GraphAStarNode>())
     }
 
     switch env.closedListImpl {
     case ClosedListImplType.ClosedListArray:
-      closedList = ClosedListArray<GraphAStarNode>()
+      closedList = AnyClosedList(ClosedListArray<GraphAStarNode>())
     }
   }
 
