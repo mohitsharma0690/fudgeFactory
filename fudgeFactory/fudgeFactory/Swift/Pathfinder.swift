@@ -9,28 +9,85 @@
 import Foundation
 
 protocol Pathfinder {
-  func searchPathInWorld(world: World, from: Int, to: Int) -> [Int]?
-  func checkPathExistsInWorld(world: World, from: Int, to: Int) -> Bool
+  func searchPathIn(world: World, from: Int, to: Int) -> [Int]?
+  func checkPathExistsIn(world: World, from: Int, to: Int) -> Bool
 }
 
 protocol AStarNode : Comparable {
   var id: Int { get }
-  var parent: Int { get set }
+  var parent: Int? { get set }
   var g: Int { get set }
   var h: Int { get set }
   var f: Int { get }
 }
 
+func ==<T: AStarNode>(lhs: T, rhs: T) -> Bool {
+  return lhs.id == rhs.id
+}
+
+func <<T: AStarNode>(lhs: T, rhs: T) -> Bool{
+  return lhs.f < rhs.f
+}
+
+extension AStarNode {
+  var f: Int {
+    return g + h
+  }
+}
+
+enum OpenListImplType {
+  case OpenListArray
+}
+
 protocol OpenList {
   typealias N
-
   var isEmpty: Bool { get }
+  var count: Int { get }
   func addNode(node: N)
   func removeNodeWith(nodeId: Int) -> Bool
   // Returns the top most node from the open list
   func pop() -> N
   func nodeWithId(nodeId: Int) -> N?
-  var count: Int { get }
+}
+
+class AnyOpenList<T> : OpenList {
+  typealias N = T
+
+  let _isEmpty: Bool
+  let _count: Int
+  let _addNode: (node: T) -> ()
+  let _removeNodeWithId: (nodeId: Int) -> Bool
+  let _pop: () -> T
+  let _nodeWithId: (nodeId: Int) -> T?
+
+  init<U: OpenList where U.N == T>(u: U) {
+    _isEmpty = u.isEmpty
+    _count = u.count
+    _addNode = u.addNode
+    _removeNodeWithId = u.removeNodeWith
+    _pop = u.pop
+    _nodeWithId = u.nodeWithId
+  }
+
+  var isEmpty: Bool { return _isEmpty }
+  var count: Int { return _count }
+
+  func addNode(node: N) {
+    _addNode(node: node)
+  }
+
+  func removeNodeWith(nodeId: Int) -> Bool {
+    return _removeNodeWithId(nodeId: nodeId)
+  }
+
+  func pop() -> T {
+    return _pop()
+  }
+
+  func nodeWithId(nodeId: Int) -> T? {
+    return _nodeWithId(nodeId: nodeId)
+  }
+
 }
 
 class OpenListArray<NODE: AStarNode> : OpenList {
@@ -81,6 +138,10 @@ class OpenListArray<NODE: AStarNode> : OpenList {
   }
 }
 
+enum ClosedListImplType {
+  case ClosedListArray
+}
+
 protocol ClosedList {
   typealias N
   var isEmpty: Bool { get }
@@ -110,7 +171,10 @@ extension ClosedList where N: AStarNode {
     var path = Array<N>()
     while from != node.id {
       path.append(node)
-      currNode = nodeWithId(node.parent)
+      guard let parent = node.parent else {
+        return nil
+      }
+      currNode = nodeWithId(parent)
       if currNode == nil {
         return nil
       }
@@ -152,9 +216,3 @@ class ClosedListArray<NODE: AStarNode> : ClosedList {
   }
 
 }
-/*
-class AStar : Pathfinder {
-
-}
-*/
-

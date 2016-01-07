@@ -121,5 +121,4 @@ class Graph : NSObject {
     assert(node != nil, "Invalid nil node at \(x, y)")
     return node!.isWalkable()
   }
-
 }
