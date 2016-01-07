@@ -40,18 +40,18 @@ enum OpenListImplType {
 }
 
 protocol OpenList {
-  typealias N
+  typealias ItemType
   var isEmpty: Bool { get }
   var count: Int { get }
-  func addNode(node: N)
+  func addNode(node: ItemType)
   func removeNodeWith(nodeId: Int) -> Bool
   // Returns the top most node from the open list
-  func pop() -> N
-  func nodeWithId(nodeId: Int) -> N?
+  func pop() -> ItemType
+  func nodeWithId(nodeId: Int) -> ItemType?
 }
 
 class AnyOpenList<T> : OpenList {
-  typealias N = T
+  typealias ItemType = T
 
   let _isEmpty: Bool
   let _count: Int
@@ -60,7 +60,7 @@ class AnyOpenList<T> : OpenList {
   let _pop: (Void -> T)
   let _nodeWithId: (Int -> T?)
 
-  init<U: OpenList where U.N == T>(_ u: U) {
+  init<U: OpenList where U.ItemType == T>(_ u: U) {
     _isEmpty = u.isEmpty
     _count = u.count
     _addNode = u.addNode
@@ -72,7 +72,7 @@ class AnyOpenList<T> : OpenList {
   var isEmpty: Bool { return _isEmpty }
   var count: Int { return _count }
 
-  func addNode(node: N) {
+  func addNode(node: T) {
     _addNode(node)
   }
 
