@@ -100,6 +100,7 @@ class Cluster {
   var height: Int
   private(set) var entrances: [Entrance] = []
   private(set) var clusterEntrances = [ClusterEntrance]()
+  private(set) var entrancePaths = [Int: [Int]]()
   var entranceDists = [[Float]]()
 
   init(id: Int, world: World, row: Int, col: Int, width: Int, height: Int) {
@@ -130,25 +131,40 @@ class Cluster {
     for i in 0..<clusterEntrances.count {
       for j in 0..<clusterEntrances.count {
         if i != j {
-          let dist = computePathBetweenEntrance(clusterEntrances[i],
+          let (dist, path) = computePathBetweenEntrance(clusterEntrances[i],
             and: clusterEntrances[j])
           entranceDists[i][j] = dist
+          setCachedPath(path, betweenIndex: i, j)
         }
       }
     }
   }
 
-  func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> Float {
+  func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> (Float, [Int]?) {
     let center1 = centerForEntrance(e1)
     let center2 = centerForEntrance(e2)
     if let search = world.search {
-      // TODO(Mohit): Cache paths based on an env variable.
       let path = search.path(center1, to: center2)
       if path != nil {
-        return search.pathCost
+        return (search.pathCost, path)
       }
     }
-    return DIST_INFINITY
+    return (DIST_INFINITY, nil)
+  }
+
+  func cachedPathBetweenEntranceIndex(i: Int, j: Int) -> [Int]? {
+    return entrancePaths[cachePathKeyFor(i, j: j)]
+  }
+
+  func setCachedPath(path: [Int]?, betweenIndex i: Int, _ j: Int) {
+    if let p = path {
+      entrancePaths[cachePathKeyFor(i, j: j)] = p
+    }
+  }
+
+  func cachePathKeyFor(i: Int, j:Int) -> Int {
+    assert(self.clusterEntrances.count < 31)
+    return i * 31 + j
   }
 
   func addEntrance(entrance: Entrance) {
