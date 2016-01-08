@@ -12,6 +12,7 @@ import UIKit
 // holds most things and acts on them.
 class World : NSObject {
 
+  private(set) var search: Search?
   var graph: Graph
   var absGraph: AbsGraph?
   var clusters: [Cluster] = [Cluster]()
@@ -23,6 +24,11 @@ class World : NSObject {
   init(env: Environment, graph: Graph) {
     self.env = env
     self.graph = graph
+  }
+
+  func initSearch() {
+    search = Search(env: env, world: self)
+    search?.pathfinder = env.initPathfinder()
   }
 
   func canMoveFrom(from: GraphNode, toAdjacent to: GraphNode) -> Bool {
@@ -263,5 +269,10 @@ class World : NSObject {
   }
 
   func computeClusterEntrancePaths() {
+    for cluster in clusters {
+      cluster.initEntrancePaths()
+      cluster.computeEntrancePaths()
+    }
   }
+  
 }

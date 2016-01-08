@@ -42,7 +42,10 @@ class Environment: NSObject {
         return Float(rowX * rowX + rowY * rowY)
       }
     }
+  }
 
+  enum PathfinderType {
+    case AStar
   }
 
   var DEBUG_COLOR_ENTRANCES = false
@@ -50,9 +53,17 @@ class Environment: NSObject {
 
   var openListImpl = OpenListImplType.OpenListArray
   var closedListImpl = ClosedListImplType.ClosedListArray
+  var pathfinderType = PathfinderType.AStar
   
   func heuristicBetween(a: GraphNode, b: GraphNode) -> Float {
     return heuristicType.distanceBetween(a, b: b)
+  }
+
+  func initPathfinder() -> Pathfinder {
+    switch pathfinderType {
+    case PathfinderType.AStar:
+      return AStar(env: self)
+    }
   }
 
 }

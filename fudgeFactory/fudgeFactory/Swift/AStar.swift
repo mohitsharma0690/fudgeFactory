@@ -10,7 +10,7 @@ import Foundation
 
 /// ======= Nodes =======
 
-protocol AStarNode : Comparable {
+protocol AStarNode {
   var id: Int { get }
   var parent: Int? { get set }
   var g: Float { get set }  // Actual distance
@@ -20,7 +20,8 @@ protocol AStarNode : Comparable {
 }
 
 func ==<T: AStarNode>(lhs: T, rhs: T) -> Bool {
-  return lhs.id == rhs.id
+  return lhs.id == rhs.id && lhs.parent == rhs.parent && lhs.g == rhs.g &&
+    lhs.h == rhs.h
 }
 
 func <<T: AStarNode>(lhs: T, rhs: T) -> Bool{
@@ -29,11 +30,14 @@ func <<T: AStarNode>(lhs: T, rhs: T) -> Bool{
 
 extension AStarNode {
   var f: Float {
+    guard g < DIST_INFINITY && h < DIST_INFINITY else {
+      return DIST_INFINITY
+    }
     return g + h
   }
 }
 
-class GraphAStarNode: AStarNode {
+class GraphAStarNode: AStarNode, Comparable {
   var node: GraphNode
   var parent: Int?
   var g: Float = DIST_INFINITY
@@ -125,7 +129,7 @@ class AnyOpenList<T> : OpenList {
   }
 }
 
-class OpenListArray<NODE: AStarNode> : OpenList {
+class OpenListArray<NODE: AStarNode where NODE: Comparable> : OpenList {
   typealias N = NODE
   var list = [NODE]()
 
@@ -278,7 +282,7 @@ extension ClosedList where ItemType: AStarNode {
   }
 }
 
-class ClosedListArray<NODE: AStarNode> : ClosedList {
+class ClosedListArray<NODE: AStarNode where NODE: Comparable> : ClosedList {
   var list = [NODE]()
 
   var isEmpty: Bool {
@@ -317,11 +321,13 @@ class ClosedListArray<NODE: AStarNode> : ClosedList {
 
 class AStar : Pathfinder {
 
+  private var _lastPath: [Int]?
+  private var _lastPathCost: Float = DIST_INFINITY
   private var env: Environment
   private var openList: AnyOpenList<GraphAStarNode>
   private var closedList: AnyClosedList<GraphAStarNode>
 
-  init(env: Environment) {
+  required init(env: Environment) {
     self.env = env
     switch env.openListImpl {
     case OpenListImplType.OpenListArray:
@@ -337,6 +343,22 @@ class AStar : Pathfinder {
   func startNewSearch() {
     openList.reset()
     closedList.reset()
+    resetLastSearch()
+  }
+
+  var lastPath: [Int]? { return _lastPath }
+
+  var lastPathCost: Float { return _lastPathCost }
+
+  func resetLastSearch() {
+    _lastPath = nil
+    _lastPathCost = DIST_INFINITY
+  }
+
+  func searchSuccess(to: GraphAStarNode, withPath path: [Int]) {
+    _lastPath = path
+    _lastPathCost = to.f
+    NSLog("Search success.")
   }
 
   func searchPathIn(world: World, from: Int, to: Int) -> [Int]? {
@@ -359,10 +381,13 @@ class AStar : Pathfinder {
       currNode = currAstarNode.node
 
       if currNode.id == to {
+        closedList.add(currAstarNode)
         guard let path = closedList.pathFrom(from, to: to) else {
           return nil
         }
-        return path.map { $0.id }
+        let finalPath = path.map { $0.id }
+        searchSuccess(currAstarNode, withPath: finalPath)
+        return finalPath
       }
 
       for edge in currNode.graphEdges {
@@ -400,7 +425,6 @@ class AStar : Pathfinder {
       }
 
     }
-
     return nil
   }
 

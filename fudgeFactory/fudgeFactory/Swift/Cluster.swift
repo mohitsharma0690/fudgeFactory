@@ -130,7 +130,9 @@ class Cluster {
     for i in 0..<clusterEntrances.count {
       for j in 0..<clusterEntrances.count {
         if i != j {
-          computePathBetweenEntrance(clusterEntrances[i], and: clusterEntrances[j])
+          let dist = computePathBetweenEntrance(clusterEntrances[i],
+            and: clusterEntrances[j])
+          entranceDists[i][j] = dist
         }
       }
     }
@@ -139,7 +141,14 @@ class Cluster {
   func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> Float {
     let center1 = centerForEntrance(e1)
     let center2 = centerForEntrance(e2)
-    return 0.0
+    if let search = world.search {
+      // TODO(Mohit): Cache paths based on an env variable.
+      let path = search.path(center1, to: center2)
+      if path != nil {
+        return search.pathCost
+      }
+    }
+    return DIST_INFINITY
   }
 
   func addEntrance(entrance: Entrance) {
