@@ -26,6 +26,7 @@ struct ClusterEntrance {
     self.centerCol = centerCol
     self.len = len
   }
+
 }
 
 class Entrance {
@@ -91,6 +92,7 @@ class Entrance {
 }
 
 class Cluster {
+  private let world: World
   var id: Int
   var startRow: Int
   var startCol: Int
@@ -98,7 +100,7 @@ class Cluster {
   var height: Int
   private(set) var entrances: [Entrance] = []
   private(set) var clusterEntrances = [ClusterEntrance]()
-  var entrancePaths = [[Bool]]()
+  var entranceDists = [[Float]]()
 
   init(id: Int, world: World, row: Int, col: Int, width: Int, height: Int) {
     self.id = id
@@ -106,6 +108,11 @@ class Cluster {
     self.startCol = col
     self.width = width
     self.height = height
+    self.world = world
+  }
+
+  func centerForEntrance(e: ClusterEntrance) -> Int {
+    return e.centerRow * width + e.centerCol
   }
 
   func initEntrancePaths() {
@@ -114,8 +121,8 @@ class Cluster {
     }
 
     for _ in 0..<clusterEntrances.count {
-      entrancePaths.append(Array<Bool>(count: clusterEntrances.count,
-        repeatedValue: false))
+      entranceDists.append(Array<Float>(count: clusterEntrances.count,
+        repeatedValue: DIST_INFINITY))
     }
   }
 
@@ -129,8 +136,10 @@ class Cluster {
     }
   }
 
-  func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) {
-
+  func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> Float {
+    let center1 = centerForEntrance(e1)
+    let center2 = centerForEntrance(e2)
+    return 0.0
   }
 
   func addEntrance(entrance: Entrance) {

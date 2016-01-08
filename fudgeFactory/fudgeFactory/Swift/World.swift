@@ -262,6 +262,6 @@ class World : NSObject {
     absGraph!.nodes = absNodes
   }
 
-  func computeLocalEntrancePaths() {
+  func computeClusterEntrancePaths() {
   }
 }

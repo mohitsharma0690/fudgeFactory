@@ -8,6 +8,19 @@
 
 import Foundation
 
+let DIST_INFINITY: Float = Float.infinity
+private let EPSILON: Float = 0.0001
+
+infix operator ~= {}
+
+/// Approximate equality in Floats.
+func ~=(lhs: Float, rhs: Float) -> Bool {
+  guard lhs != rhs else {
+    return true
+  }
+  return abs(lhs - rhs) < EPSILON
+}
+
 class Environment: NSObject {
 
   enum HeuristicType {

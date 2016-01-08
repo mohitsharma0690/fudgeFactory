@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		274BCBB01C3CA11900B16D48 /* Pathfinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274BCBAF1C3CA11900B16D48 /* Pathfinder.swift */; };
 		274BCBB21C3D1F3500B16D48 /* AStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274BCBB11C3D1F3500B16D48 /* AStar.swift */; };
+		274BCBB41C3F41A700B16D48 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274BCBB31C3F41A700B16D48 /* Search.swift */; };
 		27E89BCC1C33085800986974 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E89BCB1C33085800986974 /* Node.swift */; };
 		27E89BCE1C3337D400986974 /* Graph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E89BCD1C3337D400986974 /* Graph.swift */; };
 		27E89BD01C333C8A00986974 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E89BCF1C333C8A00986974 /* Environment.swift */; };
@@ -43,8 +43,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		274BCBAF1C3CA11900B16D48 /* Pathfinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pathfinder.swift; sourceTree = "<group>"; };
 		274BCBB11C3D1F3500B16D48 /* AStar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AStar.swift; sourceTree = "<group>"; };
+		274BCBB31C3F41A700B16D48 /* Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		27E89BCA1C33085800986974 /* fudgeFactory-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fudgeFactory-Bridging-Header.h"; sourceTree = "<group>"; };
 		27E89BCB1C33085800986974 /* Node.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		27E89BCD1C3337D400986974 /* Graph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
@@ -120,8 +120,8 @@
 				27E89BD11C34BD6900986974 /* Cluster.swift */,
 				27E89BD31C37431000986974 /* World.swift */,
 				27E89BD51C3929DE00986974 /* AbsGraph.swift */,
-				274BCBAF1C3CA11900B16D48 /* Pathfinder.swift */,
 				274BCBB11C3D1F3500B16D48 /* AStar.swift */,
+				274BCBB31C3F41A700B16D48 /* Search.swift */,
 			);
 			path = Swift;
 			sourceTree = "<group>";
@@ -334,7 +334,6 @@
 				91DFF074165999AE00F06C7E /* AppDelegate.m in Sources */,
 				91DFF077165999AE00F06C7E /* HelloWorldLayer.m in Sources */,
 				27E89BD61C3929DE00986974 /* AbsGraph.swift in Sources */,
-				274BCBB01C3CA11900B16D48 /* Pathfinder.swift in Sources */,
 				27E89BCC1C33085800986974 /* Node.swift in Sources */,
 				91DFF07A165999AE00F06C7E /* IntroLayer.m in Sources */,
 				9104F248188CF79B00678D3C /* GameController.m in Sources */,
@@ -343,6 +342,7 @@
 				27E89BD21C34BD6900986974 /* Cluster.swift in Sources */,
 				27E89BCE1C3337D400986974 /* Graph.swift in Sources */,
 				9104F245188CF78E00678D3C /* GameObject.m in Sources */,
+				274BCBB41C3F41A700B16D48 /* Search.swift in Sources */,
 				9104F23C188CE39900678D3C /* GameLayer.m in Sources */,
 				27E89BD01C333C8A00986974 /* Environment.swift in Sources */,
 			);
