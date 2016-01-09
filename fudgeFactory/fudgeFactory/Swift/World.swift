@@ -71,9 +71,8 @@ class World : NSObject {
     absGraph = createAbstractGraph()
     addNodesToAbstractGraph()
 
-    // create the abstract graph using each local entrance as two nodes in the abstract
-    // graph
-    // find and cache paths between entrances in clusters
+    computeClusterEntrancePaths()
+    createAbsGraphEdges()
   }
 
   private func createClusters() -> [Cluster] {
@@ -263,6 +262,7 @@ class World : NSObject {
         absNodes.append(node2)
 
         absNodeId += 1
+        // TODO(Mohit): Add the cluster local entrances here.
       }
     }
     absGraph!.nodes = absNodes
@@ -274,5 +274,25 @@ class World : NSObject {
       cluster.computeEntrancePaths()
     }
   }
-  
+
+  func createAbsGraphEdges() {
+    if var absGraph = absGraph {
+
+      for n1 in absGraph.nodes {
+        for n2 in absGraph.nodes {
+          let c1 = n1.info.clusterId
+          let c2 = n1.info.clusterId
+
+          if c1 == c2 {
+
+          } else {
+
+          }
+
+        }
+      }
+
+    }
+  }
+
 }
