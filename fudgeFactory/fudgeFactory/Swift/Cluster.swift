@@ -98,8 +98,7 @@ class Cluster {
   var startCol: Int
   var width: Int
   var height: Int
-  private(set) var entrances: [Entrance] = []
-  private(set) var clusterEntrances = [ClusterEntrance]()
+  private(set) var entrances = [ClusterEntrance]()
   private(set) var entrancePaths = [Int: [Int]]()
   var entranceDists = [[Float]]()
 
@@ -117,22 +116,22 @@ class Cluster {
   }
 
   func initEntrancePaths() {
-    guard clusterEntrances.count > 0 else {
+    guard entrances.count > 0 else {
       return
     }
 
-    for _ in 0..<clusterEntrances.count {
-      entranceDists.append(Array<Float>(count: clusterEntrances.count,
+    for _ in 0..<entrances.count {
+      entranceDists.append(Array<Float>(count: entrances.count,
         repeatedValue: DIST_INFINITY))
     }
   }
 
   func computeEntrancePaths() {
-    for i in 0..<clusterEntrances.count {
-      for j in 0..<clusterEntrances.count {
+    for (i, entrance1) in entrances.enumerate() {
+      for (j, entrance2) in entrances.enumerate() {
         if i != j {
-          let (dist, path) = computePathBetweenEntrance(clusterEntrances[i],
-            and: clusterEntrances[j])
+          let (dist, path) = computePathBetweenEntrance(entrance1,
+            and: entrance2)
           entranceDists[i][j] = dist
           setCachedPath(path, betweenIndex: i, j)
         }
@@ -163,24 +162,16 @@ class Cluster {
   }
 
   func cachePathKeyFor(i: Int, j:Int) -> Int {
-    assert(self.clusterEntrances.count < 31)
+    assert(entrances.count < 31)
     return i * 31 + j
   }
 
-  func addEntrance(entrance: Entrance) {
-    entrances.append(entrance)
-  }
-
-  func addEntrances(e: [Entrance]) {
-    entrances.appendContentsOf(e)
-  }
-
   func addClusterEntrance(clusterEntrance: ClusterEntrance) {
-    clusterEntrances.append(clusterEntrance)
+    entrances.append(clusterEntrance)
   }
 
   func addClusterEntrances(ce: [ClusterEntrance]) {
-    clusterEntrances.appendContentsOf(ce)
+    entrances.appendContentsOf(ce)
   }
 
 }

@@ -16,6 +16,7 @@ class World : NSObject {
   var graph: Graph
   var absGraph: AbsGraph?
   var clusters: [Cluster] = [Cluster]()
+  var entrances: [Entrance] = [Entrance]()
   var nodeIdToAbsNodeId = [Int: Int]()
   var astarNodesByNodeId = [Int: GraphAStarNode]()
 
@@ -96,20 +97,20 @@ class World : NSObject {
 
         if currRow + height < graph.height {
           // create horizontal entrances
-          let entrances =
+          let clusterEntrances =
             createHorizontalEntrancesForRow(currRow + height - 1, colStart: currCol,
               colEnd: currCol + width - 1, clusterRow: row, clusterCol: col,
               entranceId: &entranceId)
-          cluster.addEntrances(entrances)
+          entrances.appendContentsOf(clusterEntrances)
         }
 
         if currCol + width < graph.width  {
           // create vertical entrances
-          let entrances =
+          let clusterEntrances =
             createVerticalEntrancesForCol(currCol + width - 1, rowStart: currRow,
               rowEnd: currRow + height - 1, clusterRow: row, clusterCol: col,
               entranceId: &entranceId)
-          cluster.addEntrances(entrances)
+          entrances.appendContentsOf(clusterEntrances)
         }
 
         col += 1
@@ -118,18 +119,15 @@ class World : NSObject {
     }
 
     if env.DEBUG_COLOR_ENTRANCES {
-      var entrancePoints = [Point]()
-      for cluster in clusters {
-        let allEntrancePoints = cluster.entrances.reduce([Point]()) {
-          (var points: [Point], e: Entrance) -> [Point] in
-          let n1 = graph.getNodeById(e.center1Id)! as! Node
-          let n2 = graph.getNodeById(e.center2Id)! as! Node
-          points.append(n1.toPoint)
-          points.append(n2.toPoint)
-          return points
-        }
-        entrancePoints.appendContentsOf(allEntrancePoints)
+      let entrancePoints = entrances.reduce([Point]()) {
+        (var points: [Point], e: Entrance) -> [Point] in
+        let n1 = graph.getNodeById(e.center1Id)! as! Node
+        let n2 = graph.getNodeById(e.center2Id)! as! Node
+        points.append(n1.toPoint)
+        points.append(n2.toPoint)
+        return points
       }
+
       let points = entrancePoints.map { NSValue(CGPoint:$0.toCGPoint()) }
       NSNotificationCenter.defaultCenter().postNotificationName(
         "colorNodes",
@@ -215,19 +213,26 @@ class World : NSObject {
       return entrances
   }
 
+  func clusterById(id: Int) -> Cluster? {
+    let c = clusters.filter{ $0.id == id }
+    guard c.count > 0 else {
+      return nil
+    }
+    assert(c.count == 1, "Multiple clusters with same id")
+    return c[0]
+  }
+
   func linkClustersWithEntrances() {
     let width = graph.width
 
-    for cluster in clusters {
-      for entrance in cluster.entrances {
-        let cl1Id = cluster.id
-        var cl2Id = cl1Id + 1
-        if entrance.isHorizontal {
-          cl2Id = cl1Id + (width / CLUSTER_WIDTH)
-        }
-        entrance.cluster1Id = cl1Id
-        entrance.cluster2Id = cl2Id
+    for entrance in entrances {
+      let cl1Id = clusterIdForRow(entrance.center1Row, col: entrance.center1Col)
+      var cl2Id = cl1Id + 1
+      if entrance.isHorizontal {
+        cl2Id = cl1Id + (width / CLUSTER_WIDTH)
       }
+      entrance.cluster1Id = cl1Id
+      entrance.cluster2Id = cl2Id
     }
   }
 
@@ -239,33 +244,58 @@ class World : NSObject {
   func addNodesToAbstractGraph() {
     assert(absGraph != nil)
     var absNodeId = 0
+    var clusterId = 0
     var absNodes = [AbsNode]()
-    for cluster in clusters {
-      for entrance in cluster.entrances {
+    for entrance in entrances {
 
-        let node1Info = AbsNodeInfo(clusterId: entrance.cluster1Id,
-          row: entrance.center1Row - cluster.startRow,
-          col: entrance.center1Col - cluster.startCol,
-          nodeId: entrance.center1Id)
-        let node1 = AbsNode(id: absNodeId, info: node1Info)
-        nodeIdToAbsNodeId[entrance.center1Id] = absNodeId
-        absNodes.append(node1)
-
-        absNodeId += 1
-
-        let node2Info = AbsNodeInfo(clusterId: entrance.cluster2Id,
-          row: entrance.center2Row - cluster.startRow,
-          col: entrance.center2Col - cluster.startCol,
-          nodeId: entrance.center2Id)
-        let node2 = AbsNode(id: absNodeId, info: node2Info)
-        nodeIdToAbsNodeId[entrance.center2Id] = absNodeId
-        absNodes.append(node2)
-
-        absNodeId += 1
-        // TODO(Mohit): Add the cluster local entrances here.
+      guard let cluster1 = clusterById(entrance.cluster1Id) else {
+        assertionFailure("Missing cluster with id \(entrance.cluster1Id)")
+        return
       }
+      guard let cluster2 = clusterById(entrance.cluster2Id) else {
+        assertionFailure("Missing cluster with id \(entrance.cluster2Id)")
+        return
+      }
+
+      let node1Info = AbsNodeInfo(clusterId: entrance.cluster1Id,
+        row: entrance.center1Row,
+        col: entrance.center1Col,
+        nodeId: entrance.center1Id)
+      let node1 = AbsNode(id: absNodeId, info: node1Info)
+      nodeIdToAbsNodeId[entrance.center1Id] = absNodeId
+      absNodes.append(node1)
+
+      let clEntrance1 = ClusterEntrance(id: clusterId,
+        absNodeId: absNodeId,
+        centerRow: entrance.center1Row,
+        centerCol: entrance.center1Col,
+        len: entrance.len)
+      cluster1.addClusterEntrance(clEntrance1)
+
+      absNodeId += 1; clusterId += 1
+
+      let node2Info = AbsNodeInfo(clusterId: entrance.cluster2Id,
+        row: entrance.center2Row,
+        col: entrance.center2Col,
+        nodeId: entrance.center2Id)
+      let node2 = AbsNode(id: absNodeId, info: node2Info)
+      nodeIdToAbsNodeId[entrance.center2Id] = absNodeId
+      absNodes.append(node2)
+
+      let clEntrance2 = ClusterEntrance(id: clusterId,
+        absNodeId: absNodeId,
+        centerRow: entrance.center2Row,
+        centerCol: entrance.center2Col,
+        len: entrance.len)
+      cluster2.addClusterEntrance(clEntrance2)
+
+      absNodeId += 1; clusterId += 1
     }
     absGraph!.nodes = absNodes
+  }
+
+  func createLocalClusterEntrances() {
+
   }
 
   func computeClusterEntrancePaths() {
