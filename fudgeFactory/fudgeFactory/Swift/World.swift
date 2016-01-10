@@ -65,6 +65,11 @@ class World : NSObject {
     return (row / CLUSTER_HEIGHT) * clustersPerRow + (col / CLUSTER_WIDTH)
   }
 
+  func debugWorldVisually() {
+    debugColorEntrances()
+    absWorld?.debugAbstractWorld()
+  }
+
   func createAbstractGraph() {
     // create clusters
     clusters = createClusters()
@@ -75,6 +80,9 @@ class World : NSObject {
 
     computeClusterEntrancePaths()
     createAbsGraphEdges()
+
+    // Finally debug world in case we want to visually see something.
+    debugWorldVisually()
   }
 
   private func createClusters() -> [Cluster] {
@@ -118,7 +126,10 @@ class World : NSObject {
       }
       row += 1
     }
+    return clusters
+  }
 
+  func debugColorEntrances() {
     if env.DEBUG_COLOR_ENTRANCES {
       let entrancePoints = entrances.reduce([Point]()) {
         (var points: [Point], e: Entrance) -> [Point] in
@@ -135,8 +146,6 @@ class World : NSObject {
         object: nil,
         userInfo: ["nodes": points])
     }
-
-    return clusters
   }
 
   func createVerticalEntrancesForCol(col: Int, rowStart: Int, rowEnd: Int,

@@ -49,7 +49,8 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
                                 height:gameObject.height];
 
   self.env = [[Environment alloc] init];
-  self.env.DEBUG_COLOR_ENTRANCES = YES;
+  // self.env.DEBUG_COLOR_ENTRANCES = YES;
+  self.env.DEBUG_COLOR_ABS_NODES = YES;
   World *world = [[World alloc] initWithEnv:self.env graph:graph];
   [world createAbstractGraph];
 }

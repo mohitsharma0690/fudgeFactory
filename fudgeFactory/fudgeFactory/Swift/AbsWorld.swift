@@ -129,4 +129,52 @@ class AbsWorld {
       let info = AbsEdgeInfo(cost: cost, isInter: false)
       return AbsEdge(to: n2.id, info: info)
   }
+
+  func nodeForAbsNode(absNode: AbsNode) -> GraphNode? {
+    return world.graph.getNodeById(absNode.info.nodeId)
+  }
+
+  /// Debug abstract world.
+  func debugAbstractWorld() {
+    debugColorAbstractNodes()
+    debugColorAbsEdges()
+  }
+
+  func debugColorAbstractNodes() {
+    if env.DEBUG_COLOR_ABS_NODES {
+      let absPoints = absGraph.nodes.map { return (nodeForAbsNode($0)?.toPoint)! }
+      let points = absPoints.map { NSValue(CGPoint: $0.toCGPoint()) }
+      NSNotificationCenter.defaultCenter().postNotificationName(
+        "colorNodes",
+        object: nil,
+        userInfo: ["nodes": points])
+    }
+  }
+
+  func debugColorAbsEdges() {
+    var fromPoints = [Point]()
+    var toPoints = [Point]()
+    let (from, to) = colorAbsEdgesForNode(absGraph.nodes.first!)
+    fromPoints.appendContentsOf(from)
+    toPoints.appendContentsOf(to)
+
+    let fromValues = fromPoints.map { NSValue(CGPoint: $0.toCGPoint()) }
+    let toValues = toPoints.map{ NSValue(CGPoint: $0.toCGPoint()) }
+    NSNotificationCenter.defaultCenter().postNotificationName(
+      "createLines",
+      object: nil,
+      userInfo: ["fromPoints": fromValues, "toPoints": toValues])
+  }
+
+  func colorAbsEdgesForNode(node: AbsNode) -> ([Point], [Point]) {
+    let toPoints = successorPointsForNode(node)
+    let fromPoints = [Point](count: toPoints.count,
+      repeatedValue: (nodeForAbsNode(node)?.toPoint)!)
+    return (fromPoints, toPoints)
+  }
+
+  func successorPointsForNode(node: AbsNode) -> [Point] {
+    let successors = absGraph.successors(node)
+    return successors.map { return (nodeForAbsNode($0)?.toPoint)! }
+  }
 }

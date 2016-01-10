@@ -48,7 +48,10 @@ class Environment: NSObject {
     case AStar
   }
 
+  // Should be set when environment is created.
   var DEBUG_COLOR_ENTRANCES = false
+  var DEBUG_COLOR_ABS_NODES = false
+
   let heuristicType = HeuristicType.Manhattan
 
   var openListImpl = OpenListImplType.OpenListArray

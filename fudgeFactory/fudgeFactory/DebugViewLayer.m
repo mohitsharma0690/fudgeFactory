@@ -59,15 +59,37 @@
 }
 
 - (void)drawLinesFrom:(NSArray *)fromPoints to:(NSArray *)toPoints {
-  self.fromPoints = fromPoints;
-  self.toPoints = toPoints;
-  self.didDrawLines = NO;
+  NSMutableArray *newFromPoints = [[NSMutableArray alloc] initWithCapacity:fromPoints.count];
+  NSMutableArray *newToPoints = [[NSMutableArray alloc] initWithCapacity:toPoints.count];
+  for (NSValue *fromValue in fromPoints) {
+    CGPoint point = fromValue.CGPointValue;
+    CGPoint viewPoint = [self positionAtBoardPointX:point.x y:point.y];
+    [newFromPoints addObject:[NSValue valueWithCGPoint:viewPoint]];
+  }
+  for (NSValue *toValue in toPoints) {
+    CGPoint point = toValue.CGPointValue;
+    CGPoint viewPoint = [self positionAtBoardPointX:point.x y:point.y];
+    [newToPoints addObject:[NSValue valueWithCGPoint:viewPoint]];
+  }
+
+  self.fromPoints = newFromPoints;
+  self.toPoints = newToPoints;
 }
 
 - (void)clearLines {
   self.fromPoints = @[];
   self.toPoints = @[];
-  self.didDrawLines = NO;
+}
+
+#pragma mark - Board Layer and View Layer
+
+// TODO(Mohit): Move these into a super class or rather different object which handles it.
+- (CGPoint)positionAtBoardPointX:(int)x y:(int)y {
+  return CGPointMake((x+0.5f) * kGridSpace, (y+0.5f) * kGridSpace);
+}
+
+- (CGPoint)boardPointAtViewPoint:(CGPoint)viewPoint {
+  return CGPointMake(((int)viewPoint.x) / kGridSpace, ((int)viewPoint.y) / kGridSpace);
 }
 
 @end

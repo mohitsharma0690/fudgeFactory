@@ -16,6 +16,7 @@ protocol GraphNode {
   var col: Int {get}
   var successors: [Int] { get }
   var graphEdges: [GraphEdge] { get set }
+  var toPoint: Point { get }
   func isWalkable() -> Bool
 }
 
