@@ -75,7 +75,7 @@ class AbsGraph {
   }
 
   func nodeById(id: Int) -> AbsNode {
-    assert(nodes.count < id, "Invalid abs node id \(id)")
+    assert(id < nodes.count, "Invalid abs node id \(id)")
     return nodes[id]
   }
 

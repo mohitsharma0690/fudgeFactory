@@ -10,6 +10,7 @@
 		274BCBB21C3D1F3500B16D48 /* AStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274BCBB11C3D1F3500B16D48 /* AStar.swift */; };
 		274BCBB41C3F41A700B16D48 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274BCBB31C3F41A700B16D48 /* Search.swift */; };
 		274BCBB61C41BBAE00B16D48 /* AbsWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274BCBB51C41BBAE00B16D48 /* AbsWorld.swift */; };
+		274BCBB91C425FDA00B16D48 /* DebugViewLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 274BCBB81C425FDA00B16D48 /* DebugViewLayer.m */; };
 		27E89BCC1C33085800986974 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E89BCB1C33085800986974 /* Node.swift */; };
 		27E89BCE1C3337D400986974 /* Graph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E89BCD1C3337D400986974 /* Graph.swift */; };
 		27E89BD01C333C8A00986974 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E89BCF1C333C8A00986974 /* Environment.swift */; };
@@ -47,6 +48,8 @@
 		274BCBB11C3D1F3500B16D48 /* AStar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AStar.swift; sourceTree = "<group>"; };
 		274BCBB31C3F41A700B16D48 /* Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		274BCBB51C41BBAE00B16D48 /* AbsWorld.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbsWorld.swift; sourceTree = "<group>"; };
+		274BCBB71C425FDA00B16D48 /* DebugViewLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugViewLayer.h; sourceTree = "<group>"; };
+		274BCBB81C425FDA00B16D48 /* DebugViewLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugViewLayer.m; sourceTree = "<group>"; };
 		27E89BCA1C33085800986974 /* fudgeFactory-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fudgeFactory-Bridging-Header.h"; sourceTree = "<group>"; };
 		27E89BCB1C33085800986974 /* Node.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		27E89BCD1C3337D400986974 /* Graph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
@@ -182,6 +185,8 @@
 				9104F244188CF78E00678D3C /* GameObject.m */,
 				9104F246188CF79B00678D3C /* GameController.h */,
 				9104F247188CF79B00678D3C /* GameController.m */,
+				274BCBB71C425FDA00B16D48 /* DebugViewLayer.h */,
+				274BCBB81C425FDA00B16D48 /* DebugViewLayer.m */,
 			);
 			path = fudgeFactory;
 			sourceTree = "<group>";
@@ -345,6 +350,7 @@
 				274BCBB21C3D1F3500B16D48 /* AStar.swift in Sources */,
 				27E89BD21C34BD6900986974 /* Cluster.swift in Sources */,
 				27E89BCE1C3337D400986974 /* Graph.swift in Sources */,
+				274BCBB91C425FDA00B16D48 /* DebugViewLayer.m in Sources */,
 				9104F245188CF78E00678D3C /* GameObject.m in Sources */,
 				274BCBB41C3F41A700B16D48 /* Search.swift in Sources */,
 				9104F23C188CE39900678D3C /* GameLayer.m in Sources */,

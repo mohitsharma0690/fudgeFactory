@@ -15,6 +15,7 @@
 #define kWalkableColor      (ccColor3B){255, 255, 255}
 #define kUnwalkableColor    (ccColor3B){0, 0, 0}
 
+@class DebugViewLayer;
 @class GameLayer;
 @class GameObject;
 
@@ -25,6 +26,7 @@
 - (id)initWithGameObject:(GameObject *)gameObject;
 
 - (void)setGameLayer:(GameLayer *)gameLayer;
+- (void)setDebugViewLayer:(DebugViewLayer *)layer;
 
 - (NSUInteger)boardWidth;
 - (NSUInteger)boardHeight;

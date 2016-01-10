@@ -8,6 +8,7 @@
 
 #import "GameController.h"
 
+#import "DebugViewLayer.h"
 #import "GameLayer.h"
 #import "GameObject.h"
 
@@ -16,14 +17,15 @@
 @interface GameController ()
 
 @property(nonatomic, readwrite, strong) Environment *env;
-@property (nonatomic, readwrite, strong) GameObject *gameObject;
-@property (nonatomic, readwrite, weak) GameLayer *gameLayer;
+@property(nonatomic, readwrite, strong) GameObject *gameObject;
+@property(nonatomic, readwrite, weak) GameLayer *gameLayer;
+@property(nonatomic, readwrite, weak) DebugViewLayer *debugViewLayer;
 
 // used for resetting
-@property (nonatomic, readwrite, assign) BOOL didImportToSwift;
-@property (nonatomic, readwrite, assign) BOOL didColorCellsForDebugging;
-@property (nonatomic, readwrite, assign) int cellsToColor;
-@property (nonatomic, readwrite, assign) BOOL didPerformSearch;
+@property(nonatomic, readwrite, assign) BOOL didImportToSwift;
+@property(nonatomic, readwrite, assign) BOOL didColorCellsForDebugging;
+@property(nonatomic, readwrite, assign) int cellsToColor;
+@property(nonatomic, readwrite, assign) BOOL didPerformSearch;
 
 @end
 
@@ -69,6 +71,11 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
                                              selector:@selector(colorNodes:)
                                                  name:@"colorNodes"
                                                object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(createLines:)
+                                                 name:@"createLines"
+                                               object:nil];
   }
   return self;
 }
@@ -79,6 +86,10 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
 
 - (void)setGameLayer:(GameLayer *)gameLayer {
   _gameLayer = gameLayer;
+}
+
+- (void)setDebugViewLayer:(DebugViewLayer *)layer {
+  _debugViewLayer = layer;
 }
 
 #pragma mark - Game Config
@@ -165,6 +176,12 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
 #pragma mark - Notifications
 static float delay = 1;
 
+- (void)createLines:(NSNotification *)notification {
+  NSArray *fromPoints = notification.userInfo[@"fromPoints"];
+  NSArray *toPoints = notification.userInfo[@"toPoints"];
+  [self.debugViewLayer drawLinesFrom:fromPoints to:toPoints];
+}
+
 - (void)colorNodes:(NSNotification *)notification {
   if (self.didColorCellsForDebugging) {
     [self resetColorNodes];
@@ -218,7 +235,8 @@ static float delay = 1;
 }
 
 - (void)didReachSpriteAtBoardPoint:(NSValue *)pointValue {
-  [self.gameLayer changeColorForSpriteAtBoardPoint:pointValue.CGPointValue to:ccORANGE];
+  [self.gameLayer changeColorForSpriteAtBoardPoint:pointValue.CGPointValue
+                                                to:ccORANGE];
   self.cellsToColor -= 1;
 }
 
