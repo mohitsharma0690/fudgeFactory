@@ -57,10 +57,10 @@ class AbsEdge {
 }
 
 class AbsEdgeInfo {
-  var cost: Int
+  var cost: Float
   var isInter: Bool
 
-  init(cost: Int, isInter: Bool) {
+  init(cost: Float, isInter: Bool) {
     self.cost = cost
     self.isInter = isInter
   }

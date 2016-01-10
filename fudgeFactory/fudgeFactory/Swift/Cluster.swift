@@ -139,7 +139,7 @@ class Cluster {
     }
   }
 
-  func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> (Float, [Int]?) {
+  private func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> (Float, [Int]?) {
     let center1 = centerForEntrance(e1)
     let center2 = centerForEntrance(e2)
     if let search = world.search {
@@ -155,6 +155,18 @@ class Cluster {
     return entrancePaths[cachePathKeyFor(i, j: j)]
   }
 
+  /// returns DIST_INFINITY if there is no path between the
+  /// two entrances.
+  func cachedPathDistBetweenEntranceIndex(i: Int, j: Int) -> Float {
+    return entranceDists[i][j]
+  }
+
+  func costBetweenEntrances(e1: ClusterEntrance, _ e2: ClusterEntrance) -> Float {
+    let idx1 = entrances.indexOf { $0.id == e1.id }
+    let idx2 = entrances.indexOf { $0.id == e2.id }
+    return cachedPathDistBetweenEntranceIndex(idx1!, j:idx2!)
+  }
+
   func setCachedPath(path: [Int]?, betweenIndex i: Int, _ j: Int) {
     if let p = path {
       entrancePaths[cachePathKeyFor(i, j: j)] = p
@@ -164,6 +176,10 @@ class Cluster {
   func cachePathKeyFor(i: Int, j:Int) -> Int {
     assert(entrances.count < 31)
     return i * 31 + j
+  }
+
+  func isEntrance(e1: ClusterEntrance, connectedWith e2: ClusterEntrance) -> Bool {
+    return costBetweenEntrances(e1, e2) != DIST_INFINITY
   }
 
   func addClusterEntrance(clusterEntrance: ClusterEntrance) {
