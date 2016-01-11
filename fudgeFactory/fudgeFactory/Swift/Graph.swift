@@ -47,6 +47,14 @@ class Graph : NSObject {
     return node.graphEdges
   }
 
+  func nodeForPositionWithRow(row: Int, col: Int) -> GraphNode? {
+    let nodeId = nodeIdForPositionWithRow(row, col: col)
+    if let id = nodeId {
+      return getNodeById(id)
+    }
+    return nil
+  }
+
   func nodeIdForPositionWithRow(row: Int, col: Int) -> Int? {
     guard row >= 0 && row < height else {
       return nil
@@ -63,6 +71,31 @@ class Graph : NSObject {
       (row, col - 1), (row, col + 1),
       (row + 1, col - 1), (row + 1, col), (row + 1, col + 1)
     ]
+  }
+
+  func createGraphFromGraph(graph: Graph, startRow: Int, startCol: Int,
+    width: Int, height: Int) {
+
+      self.width = width
+      self.height = height
+
+      var nodeId = 0
+      // Create Nodes
+      for i in startRow.stride(to: startRow + height, by: 1) {
+        for j in startCol.stride(to: startCol + width, by: 1) {
+          let node = graph.nodeForPositionWithRow(i, col: j)
+
+          let newNodeInfo = NodeInfo(row: i, col: j)
+          newNodeInfo.isObstacle = (node?.isWalkable() == false)
+          let newNode = Node(WithId: nodeId, info: newNodeInfo)
+          nodesById[nodeId] = newNode
+
+          nodeId += 1
+        }
+      }
+
+      // Create Edges
+      addEdgesToGraph()
   }
 
   func createGraphFromWalkabilityMap(walkability: [NSValue: Bool], width: Int, height: Int) {
@@ -82,15 +115,18 @@ class Graph : NSObject {
     for node in nodes {
       nodesById[node.id] = node
     }
+    addEdgesToGraph()
+  }
 
-    // Add edges to the node (can obviously be optimized)
+  /// Add edges to the node (can obviously be optimized)
+  func addEdgesToGraph() {
     for i in 0..<width {
       for j in 0..<height {
         let nodeId = nodeIdForPositionWithRow(i, col: j)!
         let neighbors = gridNeighborsForRow(i, col: j)
-        var edges = neighbors.map({ (n) -> Int? in
+        var edges = neighbors.map { n -> Int? in
           nodeIdForPositionWithRow(n.0, col: n.1)
-        })
+        }
 
         edges = edges.filter { $0 != nil }
         let ge = edges.map { (e) -> Edge in
@@ -101,13 +137,12 @@ class Graph : NSObject {
         node.graphEdges = ge.map { $0 as GraphEdge }
         // Umm. Interestingly this fails.
         // An array of Edges is not really an array of GraphEdges.
-//        node.graphEdges = edges.map { (e) -> Edge in
-//          let edgeInfo = EdgeInfo(WithCost: 1)
-//          return Edge(toNode: e!, info: edgeInfo)
-//        }
-
+        //        node.graphEdges = edges.map { (e) -> Edge in
+        //          let edgeInfo = EdgeInfo(WithCost: 1)
+        //          return Edge(toNode: e!, info: edgeInfo)
+        //        }
+        
       }
-
     }
   }
 
