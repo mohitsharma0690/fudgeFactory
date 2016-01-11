@@ -71,6 +71,8 @@ class World : NSObject {
   }
 
   func createAbstractGraph() {
+    initSearch()
+
     // create clusters
     clusters = createClusters()
     linkClustersWithEntrances()

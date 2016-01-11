@@ -129,11 +129,13 @@ class Cluster {
   func computeEntrancePaths() {
     for (i, entrance1) in entrances.enumerate() {
       for (j, entrance2) in entrances.enumerate() {
-        if i != j {
+        if i < j {
           let (dist, path) = computePathBetweenEntrance(entrance1,
             and: entrance2)
           entranceDists[i][j] = dist
           setCachedPath(path, betweenIndex: i, j)
+          entranceDists[j][i] = dist
+          setCachedPath(path, betweenIndex: j, i)
         }
       }
     }
@@ -142,6 +144,7 @@ class Cluster {
   private func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> (Float, [Int]?) {
     let center1 = centerForEntrance(e1)
     let center2 = centerForEntrance(e2)
+    assert(world.search != nil, "Trying to search with uninitialized search")
     if let search = world.search {
       let path = search.path(center1, to: center2)
       if path != nil {
