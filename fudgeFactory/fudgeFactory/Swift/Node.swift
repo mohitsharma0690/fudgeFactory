@@ -57,22 +57,20 @@ class Node : GraphNode {
   }
 
   var toPoint: Point {
-    return Point(X: row, y: col)
+    return Point(X: col, y: row)
   }
 
   var successors: [Int] {
     return edges.map { $0.toNode }
   }
 
-  var graphEdges: [GraphEdge] {
+  var graphEdges: [Edge] {
     get {
       return edges
     }
 
     set {
-      if let e = newValue as? [Edge] {
-        edges = e
-      }
+      edges = newValue
     }
   }
 

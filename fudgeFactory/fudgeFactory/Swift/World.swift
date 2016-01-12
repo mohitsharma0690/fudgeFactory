@@ -19,7 +19,6 @@ class World : NSObject {
   var entrances: [Entrance] = [Entrance]()
   var nodeIdToAbsNodeId = [Int: Int]()
   // TODO(Mohit): Remove this from here.
-  var astarNodesByNodeId = [Int: GraphAStarNode]()
 
   var env: Environment
 
@@ -29,30 +28,7 @@ class World : NSObject {
   }
 
   func initSearch() {
-    search = Search(env: env, world: self)
-    search?.pathfinder = env.initPathfinder()
-  }
-
-  func canMoveFrom(from: GraphNode, toAdjacent to: GraphNode) -> Bool {
-    guard to.isWalkable() else {
-      return false
-    }
-    // TODO(Mohit): Diagnol movement with the adjacent nodes occupied
-    // should also theoretically be avoided.
-    return true
-  }
-
-  func astarNodeForGraphNode(graphNode: GraphNode) -> GraphAStarNode {
-    guard let node = astarNodesByNodeId[graphNode.id] else {
-      let astarNode = GraphAStarNode(node: graphNode)
-      astarNodesByNodeId[graphNode.id] = astarNode
-      return astarNode
-    }
-    return node
-  }
-
-  func graphNodeForAstarNode(astarNode: GraphAStarNode) -> GraphNode {
-    return astarNode.node
+    search = env.initNewSearchWithGraph(graph)
   }
 
   func clusterIdForRow(row: Int, col: Int) -> Int {
@@ -101,8 +77,12 @@ class World : NSObject {
       for currCol in 0.stride(to: graph.width, by: CLUSTER_WIDTH) {
         let width = min(CLUSTER_WIDTH, graph.width - currRow)
         let height = min(CLUSTER_HEIGHT, graph.height - currCol)
-        let cluster = Cluster(id: clusterId, world: self, row: currRow,
-          col: currCol, width: width, height: height)
+        let newGraph = Graph()
+        newGraph.createGraphFromGraph(graph, startRow: currRow, startCol: currCol,
+          width: width, height: height)
+
+        let cluster = Cluster(id: clusterId, env: env, graph: newGraph,
+          row: currRow, col: currCol, width: width, height: height)
         clusters.append(cluster)
         clusterId += 1
 

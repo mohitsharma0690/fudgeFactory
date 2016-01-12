@@ -11,19 +11,24 @@ import Foundation
 protocol Pathfinder {
   var lastPath: [Int]? { get }
   var lastPathCost: Float { get }
-  func searchPathIn(world: World, from: Int, to: Int) -> [Int]?
-  func checkPathExistsIn(world: World, from: Int, to: Int) -> Bool
+  func searchPathIn(graph: Graph, from: Int, to: Int) -> [Int]?
+  func checkPathExistsIn(graph: Graph, from: Int, to: Int) -> Bool
 }
 
 final class Search {
 
   private let env: Environment
-  private let world: World
+  private let graph: Graph
   var pathfinder: Pathfinder?
 
-  required init(env: Environment, world: World) {
+  required init(env: Environment, graph: Graph) {
     self.env = env
-    self.world = world
+    self.graph = graph
+  }
+
+  convenience init (env: Environment, graph: Graph, pathfinder: Pathfinder) {
+    self.init(env: env, graph: graph)
+    self.pathfinder = pathfinder
   }
 
   func path(from: Int, to: Int) -> [Int]? {
@@ -31,7 +36,7 @@ final class Search {
     guard let pathfinder = pathfinder else {
       return nil
     }
-    return pathfinder.searchPathIn(world, from: from, to: to)
+    return pathfinder.searchPathIn(graph, from: from, to: to)
   }
 
   var pathCost: Float {

@@ -84,8 +84,10 @@ class AbsWorld {
         absId2 = nodeIdToAbsNodeId[idx2!] {
           let n1 = absGraph.nodeById(absId1)
           let n2 = absGraph.nodeById(absId2)
-          addEdgeBetweenAbsNodes(n1, n2, withCost: 1)
-          addEdgeBetweenAbsNodes(n2, n1, withCost: 1)
+          let e1 = addEdgeBetweenAbsNodes(n1, n2, withCost: 1)
+          let e2 = addEdgeBetweenAbsNodes(n2, n1, withCost: 1)
+          e1.info.isInter = true
+          e2.info.isInter = true
       } else {
         assertionFailure("Cannot find graph nodes with index \(idx1) and \(idx2)")
       }
@@ -119,9 +121,10 @@ class AbsWorld {
       }
   }
 
-  func addEdgeBetweenAbsNodes(n1: AbsNode, _ n2: AbsNode, withCost cost: Float) {
+  func addEdgeBetweenAbsNodes(n1: AbsNode, _ n2: AbsNode, withCost cost: Float) -> AbsEdge {
     let edge = newEdgeBetweenAbsNodes(n1, n2, withCost: cost)
     n1.addAbsEdge(edge)
+    return edge
   }
 
   func newEdgeBetweenAbsNodes(n1: AbsNode, _ n2: AbsNode,
@@ -152,11 +155,10 @@ class AbsWorld {
   }
 
   func debugColorAbsEdges() {
-    var fromPoints = [Point]()
-    var toPoints = [Point]()
-    let (from, to) = colorAbsEdgesForNode(absGraph.nodes.first!)
-    fromPoints.appendContentsOf(from)
-    toPoints.appendContentsOf(to)
+    let (fromPoints, toPoints) = absGraph.nodes.reduce(([Point](), [Point]()), combine: {
+      let (from, to) = colorAbsEdgesForNode($1)
+      return ($0.0 + from, $0.1 + to)
+    })
 
     let fromValues = fromPoints.map { NSValue(CGPoint: $0.toCGPoint()) }
     let toValues = toPoints.map{ NSValue(CGPoint: $0.toCGPoint()) }

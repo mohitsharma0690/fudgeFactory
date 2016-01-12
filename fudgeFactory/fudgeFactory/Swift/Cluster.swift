@@ -92,7 +92,8 @@ class Entrance {
 }
 
 class Cluster {
-  private let world: World
+  private let graph: Graph
+  private let env: Environment
   var id: Int
   var startRow: Int
   var startCol: Int
@@ -102,13 +103,20 @@ class Cluster {
   private(set) var entrancePaths = [Int: [Int]]()
   var entranceDists = [[Float]]()
 
-  init(id: Int, world: World, row: Int, col: Int, width: Int, height: Int) {
+  lazy var search: Search = {
+    [unowned self] in
+    return self.env.initNewSearchWithGraph(self.graph)
+  } ()
+
+  init(id: Int, env: Environment, graph: Graph, row: Int, col: Int, width: Int, height: Int) {
     self.id = id
+    self.env = env
+    self.graph = graph
+    // do this lazily
     self.startRow = row
     self.startCol = col
     self.width = width
     self.height = height
-    self.world = world
   }
 
   func centerForEntrance(e: ClusterEntrance) -> Int {
@@ -144,12 +152,10 @@ class Cluster {
   private func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> (Float, [Int]?) {
     let center1 = centerForEntrance(e1)
     let center2 = centerForEntrance(e2)
-    assert(world.search != nil, "Trying to search with uninitialized search")
-    if let search = world.search {
-      let path = search.path(center1, to: center2)
-      if path != nil {
-        return (search.pathCost, path)
-      }
+
+    let path = search.path(center1, to: center2)
+    if path != nil {
+      return (search.pathCost, path)
     }
     return (DIST_INFINITY, nil)
   }

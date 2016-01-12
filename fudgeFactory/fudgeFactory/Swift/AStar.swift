@@ -66,8 +66,8 @@ enum OpenListImplType {
 
 protocol OpenList {
   typealias ItemType
-  var isEmpty: Bool { get }
-  var count: Int { get }
+  func isEmpty() -> Bool
+  func count() -> Int
   func addNode(node: ItemType)
   func removeNodeWith(nodeId: Int) -> Bool
   /// Returns the top most node from the open list
@@ -81,8 +81,8 @@ protocol OpenList {
 class AnyOpenList<T> : OpenList {
   typealias ItemType = T
 
-  let _isEmpty: Bool
-  let _count: Int
+  let _isEmpty: Void -> Bool
+  let _count: Void -> Int
   let _addNode: (T -> Void)
   let _removeNodeWithId: (Int -> Bool)
   let _pop: (Void -> T)
@@ -101,8 +101,13 @@ class AnyOpenList<T> : OpenList {
     _reset = u.reset
   }
 
-  var isEmpty: Bool { return _isEmpty }
-  var count: Int { return _count }
+  func isEmpty() -> Bool {
+    return _isEmpty()
+  }
+
+  func count() -> Int {
+    return _count()
+  }
 
   func addNode(node: T) {
     _addNode(node)
@@ -133,11 +138,11 @@ class OpenListArray<NODE: AStarNode where NODE: Comparable> : OpenList {
   typealias N = NODE
   var list = [NODE]()
 
-  var isEmpty: Bool {
+  func isEmpty() -> Bool {
     return list.isEmpty
   }
 
-  var count: Int {
+  func count() -> Int {
     return list.count
   }
 
@@ -182,9 +187,6 @@ class OpenListArray<NODE: AStarNode where NODE: Comparable> : OpenList {
   }
 
   func reset() {
-    for node in list {
-      node.reset()
-    }
     list.removeAll()
   }
   
@@ -198,7 +200,7 @@ enum ClosedListImplType {
 
 protocol ClosedList {
   typealias ItemType
-  var isEmpty: Bool { get }
+  func isEmpty() -> Bool
   func nodeWithId(nodeId: Int) -> ItemType?
   func add(node: ItemType)
   func remove(node: ItemType) -> Bool
@@ -209,7 +211,7 @@ protocol ClosedList {
 class AnyClosedList<T> : ClosedList {
   typealias ItemType = T
 
-  let _isEmpty: Bool
+  let _isEmpty: Void -> Bool
   let _nodeWithId: (Int -> T?)
   let _add: (ItemType -> Void)
   let _remove: (ItemType -> Bool)
@@ -225,7 +227,9 @@ class AnyClosedList<T> : ClosedList {
     _reset = u.reset
   }
 
-  var isEmpty: Bool { return _isEmpty }
+  func isEmpty() -> Bool {
+    return _isEmpty()
+  }
 
   func nodeWithId(nodeId: Int) -> T? {
     return _nodeWithId(nodeId)
@@ -285,7 +289,7 @@ extension ClosedList where ItemType: AStarNode {
 class ClosedListArray<NODE: AStarNode where NODE: Comparable> : ClosedList {
   var list = [NODE]()
 
-  var isEmpty: Bool {
+  func isEmpty() -> Bool {
     return list.isEmpty
   }
 
@@ -312,9 +316,6 @@ class ClosedListArray<NODE: AStarNode where NODE: Comparable> : ClosedList {
   }
 
   func reset() {
-    for node in list {
-      node.reset()
-    }
     list.removeAll()
   }
 }
@@ -324,6 +325,7 @@ class AStar : Pathfinder {
   private var _lastPath: [Int]?
   private var _lastPathCost: Float = DIST_INFINITY
   private var env: Environment
+  private var astarNodesByNodeId = [Int: GraphAStarNode]()
   private var openList: AnyOpenList<GraphAStarNode>
   private var closedList: AnyClosedList<GraphAStarNode>
 
@@ -343,6 +345,7 @@ class AStar : Pathfinder {
   func startNewSearch() {
     openList.reset()
     closedList.reset()
+    astarNodesByNodeId.forEach { $1.reset() }
     resetLastSearch()
   }
 
@@ -361,9 +364,10 @@ class AStar : Pathfinder {
     NSLog("Search success.")
   }
 
-  func searchPathIn(world: World, from: Int, to: Int) -> [Int]? {
+  /// Pathfinder protocol
+
+  func searchPathIn(graph: Graph, from: Int, to: Int) -> [Int]? {
     startNewSearch()
-    let graph = world.graph
 
     guard let targetNode = graph.getNodeById(to) where targetNode.isWalkable() else {
       return nil
@@ -371,17 +375,17 @@ class AStar : Pathfinder {
     guard var currNode = graph.getNodeById(from) else {
       return nil
     }
-    var currAstarNode = world.astarNodeForGraphNode(currNode)
+    var currAstarNode = astarNodeForGraphNode(currNode)
     currAstarNode.g = 0
     currAstarNode.h = env.heuristicBetween(currNode, b: targetNode)
     openList.addNode(currAstarNode)
 
-    while !openList.isEmpty {
+    while !openList.isEmpty() {
       currAstarNode = openList.pop()
       currNode = currAstarNode.node
+      closedList.add(currAstarNode)
 
       if currNode.id == to {
-        closedList.add(currAstarNode)
         guard let path = closedList.pathFrom(from, to: to) else {
           return nil
         }
@@ -394,7 +398,7 @@ class AStar : Pathfinder {
         let successor = edge.toNode
         let succGraphNode = graph.getNodeById(successor)!
 
-        if !world.canMoveFrom(currNode, toAdjacent: succGraphNode) {
+        if !graph.canMoveFrom(currNode, toAdjacent: succGraphNode) {
           continue
         }
 
@@ -416,7 +420,7 @@ class AStar : Pathfinder {
 
         } else {
           // Add to open list.
-          let newSuccessorNode = world.astarNodeForGraphNode(succGraphNode)
+          let newSuccessorNode = astarNodeForGraphNode(succGraphNode)
           newSuccessorNode.g = currAstarNode.g + edge.cost
           newSuccessorNode.h = env.heuristicBetween(succGraphNode, b: targetNode)
           newSuccessorNode.parent = currNode.id
@@ -428,7 +432,22 @@ class AStar : Pathfinder {
     return nil
   }
 
-  func checkPathExistsIn(world: World, from: Int, to: Int) -> Bool {
-    return searchPathIn(world, from: from, to: to) != nil
+  func checkPathExistsIn(graph: Graph, from: Int, to: Int) -> Bool {
+    return searchPathIn(graph, from: from, to: to) != nil
   }
+
+  /// Graph node to Astar node
+  func astarNodeForGraphNode(graphNode: GraphNode) -> GraphAStarNode {
+    guard let node = astarNodesByNodeId[graphNode.id] else {
+      let astarNode = GraphAStarNode(node: graphNode)
+      astarNodesByNodeId[graphNode.id] = astarNode
+      return astarNode
+    }
+    return node
+  }
+
+  func graphNodeForAstarNode(astarNode: GraphAStarNode) -> GraphNode {
+    return astarNode.node
+  }
+
 }

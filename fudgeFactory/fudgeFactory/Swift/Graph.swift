@@ -15,7 +15,7 @@ protocol GraphNode {
   var row: Int { get }
   var col: Int {get}
   var successors: [Int] { get }
-  var graphEdges: [GraphEdge] { get set }
+  var graphEdges: [Edge] { get set }
   var toPoint: Point { get }
   func isWalkable() -> Bool
 }
@@ -107,9 +107,9 @@ class Graph : NSObject {
       let p = point.CGPointValue()
       let x = Int(p.x)
       let y = Int(p.y)
-      let info = NodeInfo(row: x, col: y)
+      let info = NodeInfo(row: y, col: x)
       info.isObstacle = !isWalkable
-      return Node(WithId: nodeIdForPositionWithRow(x, col: y)!, info: info)
+      return Node(WithId: nodeIdForPositionWithRow(y, col: x)!, info: info)
     }
 
     for node in nodes {
@@ -120,21 +120,20 @@ class Graph : NSObject {
 
   /// Add edges to the node (can obviously be optimized)
   func addEdgesToGraph() {
-    for i in 0..<width {
-      for j in 0..<height {
+    for i in 0..<height {
+      for j in 0..<width {
         let nodeId = nodeIdForPositionWithRow(i, col: j)!
         let neighbors = gridNeighborsForRow(i, col: j)
-        var edges = neighbors.map { n -> Int? in
+        let edges = neighbors.map { n -> Int? in
           nodeIdForPositionWithRow(n.0, col: n.1)
         }
 
-        edges = edges.filter { $0 != nil }
-        let ge = edges.map { (e) -> Edge in
+        var node = nodesById[nodeId]!
+        node.graphEdges = edges.filter({ $0 != nil}).map { (e) -> Edge in
           let edgeInfo = EdgeInfo(WithCost: 1)
           return Edge(toNode: e!, info: edgeInfo)
         }
-        var node = nodesById[nodeId]!
-        node.graphEdges = ge.map { $0 as GraphEdge }
+        // node.graphEdges = ge.map { $0 as GraphEdge }
         // Umm. Interestingly this fails.
         // An array of Edges is not really an array of GraphEdges.
         //        node.graphEdges = edges.map { (e) -> Edge in
@@ -146,7 +145,8 @@ class Graph : NSObject {
     }
   }
 
-  // Walkability
+  /// Walkability
+  
   func isObstacleAtX(x: Int, y: Int) -> Bool {
     return !isObstacleAtX(x, y: y)
   }
@@ -157,4 +157,14 @@ class Graph : NSObject {
     assert(node != nil, "Invalid nil node at \(x, y)")
     return node!.isWalkable()
   }
+
+  func canMoveFrom(from: GraphNode, toAdjacent to: GraphNode) -> Bool {
+    guard to.isWalkable() else {
+      return false
+    }
+    // TODO(Mohit): Diagnol movement with the adjacent nodes occupied
+    // should also theoretically be avoided.
+    return true
+  }
+
 }
