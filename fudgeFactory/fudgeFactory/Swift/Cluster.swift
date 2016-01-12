@@ -112,15 +112,15 @@ class Cluster {
     self.id = id
     self.env = env
     self.graph = graph
-    // do this lazily
     self.startRow = row
     self.startCol = col
     self.width = width
     self.height = height
   }
 
+  /// Returns local center for the cluster entrance.
   func centerForEntrance(e: ClusterEntrance) -> Int {
-    return e.centerRow * width + e.centerCol
+    return (e.centerRow - startRow) * width + (e.centerCol - startCol)
   }
 
   func initEntrancePaths() {
