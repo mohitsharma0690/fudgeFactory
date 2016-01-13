@@ -14,7 +14,7 @@ class AbsWorld {
   private var world: World
   var absGraph: AbsGraph
   var nodeIdToAbsNodeId = [Int: Int]()
-
+  var targetNodeIsAbsNode = [Bool](count: 2, repeatedValue: false)
 
   init(env: Environment, world: World, absGraph: AbsGraph) {
     self.env = env
@@ -100,10 +100,15 @@ class AbsWorld {
   }
 
   func createIntraClusterEdges(cluster: Cluster) {
-    let count = cluster.entrances.count
-    for (i, e1) in cluster.entrances.enumerate() {
-      for j in (i+1)..<count {
-        let e2 = cluster.entrances[j]
+    for (i, e) in cluster.entrances.enumerate() {
+      createIntraEdgesForCluster(cluster, entrance: e, atIndex: i) { i < $0 }
+    }
+  }
+
+  func createIntraEdgesForCluster(cluster: Cluster,
+    entrance e1: ClusterEntrance, atIndex idx: Int, filter: Int -> Bool) {
+    for (j, e2) in cluster.entrances.enumerate() {
+      if filter(j) {
         // Bidirectional edges
         addIntraEdgeInCluster(cluster, between: e1, e2)
         addIntraEdgeInCluster(cluster, between: e2, e1)
@@ -179,4 +184,49 @@ class AbsWorld {
     let successors = absGraph.successors(node)
     return successors.map { return (nodeForAbsNode($0)?.toPoint)! }
   }
+
+  /// Insert start, end nodes to abstract graph
+
+  func insertNodeToAbsGraph(nodeId: Int, atRow row: Int, col: Int, index: Int) -> Int? {
+    guard index == 0 || index == 1 else {
+      assertionFailure("Invalid index \(index)")
+      return nil
+    }
+
+    if let absNodeId = nodeIdToAbsNodeId[nodeId] {
+      // Node ID is already there in the abstract graph
+      targetNodeIsAbsNode[index] = true
+      return absNodeId
+    } else {
+      let absNodeId = absGraph.maxNodeId
+      targetNodeIsAbsNode[index] = false
+      guard let cluster = world.clusterForNodeId(nodeId) else {
+        assertionFailure("No cluster for node \(nodeId)")
+        return nil
+      }
+
+      // Add cluster entrance for node
+      let entrance = ClusterEntrance(id: cluster.id,
+        absNodeId: absNodeId!, centerRow: row, centerCol: col, len: 1)
+      cluster.addClusterEntrance(entrance)
+
+      // Add abstract node.
+      let info = AbsNodeInfo(clusterId: cluster.id, row: row, col: col, nodeId: nodeId)
+      let node = AbsNode(id: absNodeId!, info: info)
+      absGraph.addAbsNode(node)
+
+      // Add paths from entrance to other cluster entrances
+      cluster.resizeEntrancePaths()
+      cluster.recomputeEntrancePathsFrom(entrance)
+      // Create Intra cluster edges
+      createIntraEdgesForCluster(cluster,
+        entrance: entrance,
+        atIndex: cluster.entrances.count - 1) {
+          $0 != cluster.entrances.count - 1
+      }
+
+      return absNodeId
+    }
+  }
+  
 }

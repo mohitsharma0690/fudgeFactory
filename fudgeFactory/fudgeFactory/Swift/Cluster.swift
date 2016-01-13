@@ -27,6 +27,11 @@ struct ClusterEntrance {
     self.len = len
   }
 
+  func description() -> String {
+    return "id: \(id), absNodeId: \(absNodeId), row: \(centerRow), " +
+           "col: \(centerCol), len: \(len)"
+  }
+
 }
 
 class Entrance {
@@ -127,29 +132,68 @@ class Cluster {
     guard entrances.count > 0 else {
       return
     }
+    entranceDists = createDistsArray(entrances.count)
+  }
 
-    for _ in 0..<entrances.count {
-      entranceDists.append(Array<Float>(count: entrances.count,
-        repeatedValue: DIST_INFINITY))
+  func resizeEntrancePaths() {
+    guard entranceDists.count < entrances.count else {
+      NSLog("Entrance paths don't need resizing.")
+      return;
     }
+    guard entrances.count - entranceDists.count == 1 else {
+      assertionFailure("Invalid resizing.")
+      return
+    }
+
+    var newDists = [[Float]]()
+    for dists in entranceDists {
+      var d = dists  // creates a copy
+      d.append(DIST_INFINITY)
+      newDists.append(d)
+    }
+    newDists.append(Array<Float>(count: entrances.count,
+      repeatedValue: DIST_INFINITY))
+    entranceDists = newDists
+  }
+
+  func createDistsArray(count: Int) -> [[Float]] {
+    var dists = [[Float]]()
+    for _ in 0..<count {
+      dists.append(Array<Float>(count: count, repeatedValue: DIST_INFINITY))
+    }
+    return dists
   }
 
   func computeEntrancePaths() {
-    for (i, entrance1) in entrances.enumerate() {
-      for (j, entrance2) in entrances.enumerate() {
-        if i < j {
-          let (dist, path) = computePathBetweenEntrance(entrance1,
-            and: entrance2)
-          entranceDists[i][j] = dist
-          setCachedPath(path, betweenIndex: i, j)
-          entranceDists[j][i] = dist
-          setCachedPath(path, betweenIndex: j, i)
-        }
+    for (i, entrance) in entrances.enumerate() {
+      computeEntrancePathFrom(entrance, atIndex: i) { i < $0 }
+    }
+  }
+
+  func recomputeEntrancePathsFrom(entrance: ClusterEntrance) {
+    guard let idx = entrances.indexOf({ $0.id == entrance.id }) else {
+      assertionFailure("Cannot find cluster entrance \(entrance)")
+      return
+    }
+    computeEntrancePathFrom(entrance, atIndex: idx) { idx != $0 }
+  }
+
+  /// Compute entrance paths only for entrances which return true from
+  /// the filter.
+  func computeEntrancePathFrom(entrance: ClusterEntrance, atIndex index: Int, filter: Int -> Bool) {
+    for (j, entrance2) in entrances.enumerate() {
+      if filter(j) {
+        let (dist, path) = computePathBetweenEntrance(entrance,
+          and: entrance2)
+        entranceDists[index][j] = dist
+        setCachedPath(path, betweenIndex: index, j)
+        entranceDists[j][index] = dist
+        setCachedPath(path, betweenIndex: j, index)
       }
     }
   }
 
-  private func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> (Float, [Int]?) {
+  func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> (Float, [Int]?) {
     let center1 = centerForEntrance(e1)
     let center2 = centerForEntrance(e2)
 

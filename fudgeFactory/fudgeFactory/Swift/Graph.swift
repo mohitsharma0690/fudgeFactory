@@ -65,6 +65,10 @@ class Graph : NSObject {
     return row * width + col
   }
 
+  func positionForNodeId(nodeId: Int) -> (Int, Int) {
+    return (nodeId / width, nodeId % width)
+  }
+
   func gridNeighborsForRow(row: Int, col: Int) -> [(Int, Int)] {
     return [
       (row - 1, col - 1), (row - 1, col), (row - 1, col + 1),

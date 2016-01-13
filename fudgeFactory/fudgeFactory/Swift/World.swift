@@ -32,13 +32,19 @@ class World : NSObject {
   }
 
   func clusterIdForRow(row: Int, col: Int) -> Int {
-    assert(row >= 0 && row < graph.width && col >= 0 && col < graph.height)
+    assert(row >= 0 && row < graph.height && col >= 0 && col < graph.width)
 
     var clustersPerRow = graph.width / CLUSTER_HEIGHT
     if graph.width % CLUSTER_HEIGHT != 0 {
       clustersPerRow += 1
     }
     return (row / CLUSTER_HEIGHT) * clustersPerRow + (col / CLUSTER_WIDTH)
+  }
+
+  func clusterForNodeId(nodeId: Int) -> Cluster? {
+    let (row, col) = graph.positionForNodeId(nodeId)
+    let clusterId = clusterIdForRow(row, col: col)
+    return clusterById(clusterId)
   }
 
   func debugWorldVisually() {
@@ -245,4 +251,13 @@ class World : NSObject {
     absWorld?.createEdgesAcrossClusters(entrances)
   }
 
+  /// Insert start, end nodes to abstract graph
+  func addToAbsGraph(start: Int, end: Int) {
+    insertNodeToAbsGraph(start)
+    insertNodeToAbsGraph(end)
+  }
+
+  func insertNodeToAbsGraph(nodeId: Int) {
+    absWorld?.insertNodeToAbsGraph(nodeId)
+  }
 }

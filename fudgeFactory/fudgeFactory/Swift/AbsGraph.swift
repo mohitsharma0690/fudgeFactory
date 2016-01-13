@@ -85,4 +85,16 @@ class AbsGraph {
     }
   }
 
+  var maxNodeId: Int? {
+    guard nodes.count > 0 else {
+      return nil
+    }
+    return nodes.count - 1
+  }
+
+  func addAbsNode(absNode: AbsNode) {
+    assert(absNode.id == nodes.count)
+    nodes.append(absNode)
+  }
+
 }
