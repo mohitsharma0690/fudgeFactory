@@ -13,6 +13,7 @@ class AbsWorld {
   private let env: Environment
   private var world: World
   var absGraph: AbsGraph
+  var search: Search?
   var nodeIdToAbsNodeId = [Int: Int]()
   var targetNodeIsAbsNode = [Bool](count: 2, repeatedValue: false)
 
@@ -228,5 +229,12 @@ class AbsWorld {
       return absNodeId
     }
   }
-  
+
+  func initSearch() {
+    search = env.initNewSearchWithGraph(absGraph)
+  }
+
+  func searchPathFrom(startId: Int, to endId: Int) {
+
+  }
 }

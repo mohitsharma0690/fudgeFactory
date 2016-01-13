@@ -252,12 +252,34 @@ class World : NSObject {
   }
 
   /// Insert start, end nodes to abstract graph
-  func addToAbsGraph(start: Int, end: Int) {
-    insertNodeToAbsGraph(start)
-    insertNodeToAbsGraph(end)
+  func addToAbsGraphStart(startRow: Int, _ startCol: Int,
+    end endRow: Int, _ endCol: Int) -> (Int?, Int?)? {
+      guard let startId = graph.nodeIdForPositionWithRow(startRow, col: startCol) else {
+        assertionFailure("Cannot find start location in graph")
+        return nil
+      }
+
+      guard let endId = graph.nodeIdForPositionWithRow(endRow, col: endCol) else {
+        assertionFailure("Cannot find start location in graph")
+        return nil
+      }
+
+      let absStart = absWorld?.insertNodeToAbsGraph(startId,
+        atRow: startRow, col: startCol, index: 0)
+      let absEnd = absWorld?.insertNodeToAbsGraph(endId,
+        atRow: endRow, col: endCol, index: 1)
+      return (absStart, absEnd)
   }
 
-  func insertNodeToAbsGraph(nodeId: Int) {
-    absWorld?.insertNodeToAbsGraph(nodeId)
+  func searchFromStart(startRow: Int, _ startCol: Int,
+    toEnd endRow: Int, _ endCol: Int) {
+      guard let (absStartId, absEndId) = addToAbsGraphStart(
+        startRow, startCol, end: endRow, endCol) else {
+          assertionFailure("Could not add start and end abs nodes.")
+          return
+      }
+
+      absWorld?.searchPathFrom(absStartId!, to: absEndId!)
   }
+
 }

@@ -366,7 +366,7 @@ class AStar : Pathfinder {
 
   /// Pathfinder protocol
 
-  func searchPathIn(graph: Graph, from: Int, to: Int) -> [Int]? {
+  func searchPathIn(graph: SearchGraph, from: Int, to: Int) -> [Int]? {
     startNewSearch()
 
     guard let targetNode = graph.getNodeById(to) where targetNode.isWalkable() else {
@@ -432,7 +432,7 @@ class AStar : Pathfinder {
     return nil
   }
 
-  func checkPathExistsIn(graph: Graph, from: Int, to: Int) -> Bool {
+  func checkPathExistsIn(graph: SearchGraph, from: Int, to: Int) -> Bool {
     return searchPathIn(graph, from: from, to: to) != nil
   }
 

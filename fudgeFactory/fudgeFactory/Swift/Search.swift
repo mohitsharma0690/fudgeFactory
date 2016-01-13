@@ -8,25 +8,32 @@
 
 import Foundation
 
+/// ======= Search Graph =======
+
+protocol SearchGraph {
+  func getNodeById(nodeId: Int) -> GraphNode?
+  func canMoveFrom(a: GraphNode, toAdjacent b: GraphNode) -> Bool
+}
+
 protocol Pathfinder {
   var lastPath: [Int]? { get }
   var lastPathCost: Float { get }
-  func searchPathIn(graph: Graph, from: Int, to: Int) -> [Int]?
-  func checkPathExistsIn(graph: Graph, from: Int, to: Int) -> Bool
+  func searchPathIn(graph: SearchGraph, from: Int, to: Int) -> [Int]?
+  func checkPathExistsIn(graph: SearchGraph, from: Int, to: Int) -> Bool
 }
 
 final class Search {
 
   private let env: Environment
-  private let graph: Graph
+  private let graph: SearchGraph
   var pathfinder: Pathfinder?
 
-  required init(env: Environment, graph: Graph) {
+  required init(env: Environment, graph: SearchGraph) {
     self.env = env
     self.graph = graph
   }
 
-  convenience init (env: Environment, graph: Graph, pathfinder: Pathfinder) {
+  convenience init (env: Environment, graph: SearchGraph, pathfinder: Pathfinder) {
     self.init(env: env, graph: graph)
     self.pathfinder = pathfinder
   }

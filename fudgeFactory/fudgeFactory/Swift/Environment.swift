@@ -62,7 +62,7 @@ class Environment: NSObject {
     return heuristicType.distanceBetween(a, b: b)
   }
 
-  func initNewSearchWithGraph(graph: Graph) -> Search {
+  func initNewSearchWithGraph(graph: SearchGraph) -> Search {
     let pathfinder: Pathfinder?
     switch pathfinderType {
     case PathfinderType.AStar:

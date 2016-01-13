@@ -66,7 +66,8 @@ class AbsEdgeInfo {
   }
 }
 
-class AbsGraph {
+// TODO(Mohit): Rename SearchGraph to Searchable
+class AbsGraph : SearchGraph {
   var nodes = [AbsNode]()
   var graph: Graph
 
@@ -95,6 +96,16 @@ class AbsGraph {
   func addAbsNode(absNode: AbsNode) {
     assert(absNode.id == nodes.count)
     nodes.append(absNode)
+  }
+
+  /// ===== Search Graph =====
+  
+  func getNodeById(nodeId: Int) -> GraphNode? {
+    return nil
+  }
+
+  func canMoveFrom(a: GraphNode, toAdjacent b: GraphNode) -> Bool {
+    return false
   }
 
 }
