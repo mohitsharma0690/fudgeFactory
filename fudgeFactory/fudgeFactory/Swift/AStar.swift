@@ -394,7 +394,7 @@ class AStar : Pathfinder {
         return finalPath
       }
 
-      for edge in currNode.graphEdges {
+      for edge in currNode.edges {
         let successor = edge.toNode
         let succGraphNode = graph.getNodeById(successor)!
 

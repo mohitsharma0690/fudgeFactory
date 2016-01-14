@@ -79,24 +79,17 @@ class Node : GraphNode {
   }
 }
 
-class EdgeInfo {
-  var cost: Float
+class Edge {
+  let toNode: Int
+  let cost: Float
 
-  init(WithCost cost: Float) {
+  init(toNode: Int, cost: Float) {
+    self.toNode = toNode
     self.cost = cost
   }
-}
 
-class Edge : GraphEdge {
-  var toNode: Int
-  var info: EdgeInfo
-
-  init(toNode: Int, info: EdgeInfo) {
-    self.toNode = toNode
-    self.info = info
+  func description() -> String {
+    return "Edge to node: \(toNode), cost: \(cost)"
   }
 
-  var cost: Float {
-    return info.cost
-  }
 }

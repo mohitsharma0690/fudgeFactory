@@ -8,10 +8,10 @@
 
 import Foundation
 
-class AbsNode {
+class AbsNode : GraphNode {
   var id: Int
   var info: AbsNodeInfo
-  private(set) var edges = [AbsEdge]()
+  var edges = [Edge]()
 
   init(id: Int, info: AbsNodeInfo) {
     self.id = id
@@ -20,6 +20,22 @@ class AbsNode {
 
   func addAbsEdge(edge: AbsEdge) {
     edges.append(edge)
+  }
+
+  /// ===== GraphNode =====
+  var row: Int { return info.row }
+  var col: Int { return info.col }
+
+  var successors: [Int] {
+    return edges.map { $0.toNode }
+  }
+
+  var toPoint: Point {
+    return Point(X: row, y: col)
+  }
+
+  func isWalkable() -> Bool {
+    return true
   }
 }
 
@@ -45,25 +61,18 @@ struct AbsNodeInfo {
 
 }
 
-class AbsEdge {
-  var toAbsNode: Int
-  var info: AbsEdgeInfo
+class AbsEdge: Edge {
+  var isInter: Bool = false
 
-  init(to: Int, info: AbsEdgeInfo) {
-    toAbsNode = to
-    self.info = info
+  override init(toNode: Int, cost: Float) {
+    super.init(toNode: toNode, cost: cost)
   }
 
-}
-
-class AbsEdgeInfo {
-  var cost: Float
-  var isInter: Bool
-
-  init(cost: Float, isInter: Bool) {
-    self.cost = cost
+  convenience init(toNode: Int, cost: Float, isInter: Bool) {
+    self.init(toNode: toNode, cost: cost)
     self.isInter = isInter
   }
+
 }
 
 // TODO(Mohit): Rename SearchGraph to Searchable
@@ -81,9 +90,7 @@ class AbsGraph : SearchGraph {
   }
 
   func successors(node: AbsNode) -> [AbsNode] {
-    return node.edges.map { (edge: AbsEdge) -> AbsNode in
-      nodeById(edge.toAbsNode)
-    }
+    return node.edges.map { nodeById($0.toNode) }
   }
 
   var maxNodeId: Int? {
@@ -99,7 +106,7 @@ class AbsGraph : SearchGraph {
   }
 
   /// ===== Search Graph =====
-  
+
   func getNodeById(nodeId: Int) -> GraphNode? {
     return nil
   }

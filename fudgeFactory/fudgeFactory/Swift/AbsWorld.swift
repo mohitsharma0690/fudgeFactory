@@ -37,11 +37,11 @@ class AbsWorld {
         assertionFailure("Missing cluster with id \(entrance.cluster2Id)")
         return
       }
-
       let node1Info = AbsNodeInfo(clusterId: entrance.cluster1Id,
         row: entrance.center1Row,
         col: entrance.center1Col,
         nodeId: entrance.center1Id)
+
       let node1 = AbsNode(id: absNodeId, info: node1Info)
       nodeIdToAbsNodeId[entrance.center1Id] = absNodeId
       absNodes.append(node1)
@@ -59,6 +59,7 @@ class AbsWorld {
         row: entrance.center2Row,
         col: entrance.center2Col,
         nodeId: entrance.center2Id)
+
       let node2 = AbsNode(id: absNodeId, info: node2Info)
       nodeIdToAbsNodeId[entrance.center2Id] = absNodeId
       absNodes.append(node2)
@@ -87,8 +88,8 @@ class AbsWorld {
           let n2 = absGraph.nodeById(absId2)
           let e1 = addEdgeBetweenAbsNodes(n1, n2, withCost: 1)
           let e2 = addEdgeBetweenAbsNodes(n2, n1, withCost: 1)
-          e1.info.isInter = true
-          e2.info.isInter = true
+          e1.isInter = true
+          e2.isInter = true
       } else {
         assertionFailure("Cannot find graph nodes with index \(idx1) and \(idx2)")
       }
@@ -135,8 +136,7 @@ class AbsWorld {
 
   func newEdgeBetweenAbsNodes(n1: AbsNode, _ n2: AbsNode,
     withCost cost: Float) -> AbsEdge {
-      let info = AbsEdgeInfo(cost: cost, isInter: false)
-      return AbsEdge(to: n2.id, info: info)
+      return AbsEdge(toNode: n2.id, cost: cost)
   }
 
   func nodeForAbsNode(absNode: AbsNode) -> GraphNode? {
@@ -212,7 +212,8 @@ class AbsWorld {
       cluster.addClusterEntrance(entrance)
 
       // Add abstract node.
-      let info = AbsNodeInfo(clusterId: cluster.id, row: row, col: col, nodeId: nodeId)
+      let info = AbsNodeInfo(clusterId: cluster.id,
+        row: row, col: col, nodeId: nodeId)
       let node = AbsNode(id: absNodeId!, info: info)
       absGraph.addAbsNode(node)
 

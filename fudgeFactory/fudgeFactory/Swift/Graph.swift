@@ -10,20 +10,13 @@ import Foundation
 import UIKit
 
 protocol GraphNode {
-
   var id: Int { get }
   var row: Int { get }
   var col: Int {get}
   var successors: [Int] { get }
-  var graphEdges: [Edge] { get set }
   var toPoint: Point { get }
   func isWalkable() -> Bool
-}
-
-protocol GraphEdge {
-
-  var cost: Float { get }
-  var toNode: Int { get }
+  var edges: [Edge] { get set }
 }
 
 class Graph : NSObject, SearchGraph {
@@ -43,8 +36,8 @@ class Graph : NSObject, SearchGraph {
     }
   }
 
-  func outEdges(node: GraphNode) -> [GraphEdge] {
-    return node.graphEdges
+  func outEdges(node: GraphNode) -> [Edge] {
+    return node.edges
   }
 
   func nodeForPositionWithRow(row: Int, col: Int) -> GraphNode? {
@@ -133,9 +126,8 @@ class Graph : NSObject, SearchGraph {
         }
 
         var node = nodesById[nodeId]!
-        node.graphEdges = edges.filter({ $0 != nil}).map { (e) -> Edge in
-          let edgeInfo = EdgeInfo(WithCost: 1)
-          return Edge(toNode: e!, info: edgeInfo)
+        node.edges = edges.filter({ $0 != nil}).map { (e) -> Edge in
+          return Edge(toNode: e!, cost: 1)
         }
         // node.graphEdges = ge.map { $0 as GraphEdge }
         // Umm. Interestingly this fails.
