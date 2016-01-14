@@ -199,7 +199,7 @@ class AbsWorld {
       targetNodeIsAbsNode[index] = true
       return absNodeId
     } else {
-      let absNodeId = absGraph.maxNodeId
+      let absNodeId = absGraph.maxNodeId! + 1
       targetNodeIsAbsNode[index] = false
       guard let cluster = world.clusterForNodeId(nodeId) else {
         assertionFailure("No cluster for node \(nodeId)")
@@ -208,13 +208,13 @@ class AbsWorld {
 
       // Add cluster entrance for node
       let entrance = ClusterEntrance(id: cluster.id,
-        absNodeId: absNodeId!, centerRow: row, centerCol: col, len: 1)
+        absNodeId: absNodeId, centerRow: row, centerCol: col, len: 1)
       cluster.addClusterEntrance(entrance)
 
       // Add abstract node.
       let info = AbsNodeInfo(clusterId: cluster.id,
         row: row, col: col, nodeId: nodeId)
-      let node = AbsNode(id: absNodeId!, info: info)
+      let node = AbsNode(id: absNodeId, info: info)
       absGraph.addAbsNode(node)
 
       // Add paths from entrance to other cluster entrances

@@ -16,7 +16,10 @@
 
 @interface GameController ()
 
+// Swift
 @property(nonatomic, readwrite, strong) Environment *env;
+@property(nonatomic, readwrite, strong) World *world;
+
 @property(nonatomic, readwrite, strong) GameObject *gameObject;
 @property(nonatomic, readwrite, weak) GameLayer *gameLayer;
 @property(nonatomic, readwrite, weak) DebugViewLayer *debugViewLayer;
@@ -51,8 +54,8 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
   self.env = [[Environment alloc] init];
   // self.env.DEBUG_COLOR_ENTRANCES = YES;
   self.env.DEBUG_COLOR_ABS_NODES = YES;
-  World *world = [[World alloc] initWithEnv:self.env graph:graph];
-  [world createAbstractGraph];
+  self.world = [[World alloc] initWithEnv:self.env graph:graph];
+  [self.world createAbstractGraph];
 }
 
 - (id)initWithGameObject:(GameObject *)gameObject {
@@ -166,7 +169,16 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
   }
 
   if (self.cellsToColor == 0 && !self.didPerformSearch) {
-    [self.gameObject startSearchForPath];
+    // [self.gameObject startSearchForPath];
+    CGPoint start = self.gameObject.startPoint;
+    CGPoint end = self.gameObject.endPoint;
+    NSArray *path = [self.world pathFromRow:start.y
+                                        col:start.x
+                                      toRow:end.y
+                                        col:end.x];
+    if (path.count) {
+      [[NSNotificationCenter defaultCenter] postNotificationName:@"didFindPath" object:path];
+    }
   } else if (self.cellsToColor == 0 && self.didPerformSearch) {
     [self.gameLayer resetGameBoard];
     delay = 1.0f;

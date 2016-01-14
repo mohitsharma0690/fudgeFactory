@@ -267,7 +267,10 @@ class Cluster {
   }
 
   func convertPath(path: [Int], toGlobalGraph graph: Graph) -> [Int] {
-    return path.map { graph.width * startRow + startCol + $0 }
+    return path.map {
+      graph.width * startRow + startCol + /* convert cluster */
+        ($0 / width) * graph.width + ($0 % width)
+    }
   }
 
 }

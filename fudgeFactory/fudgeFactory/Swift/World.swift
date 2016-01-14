@@ -313,18 +313,25 @@ class World : NSObject {
     return path
   }
 
-  func searchFromStart(startRow: Int, _ startCol: Int,
-    toEnd endRow: Int, _ endCol: Int) {
+  func pathFromRow(startRow: Int, col startCol: Int,
+    toRow endRow: Int, col endCol: Int) -> [NSValue]? {
       guard let (absStartId, absEndId) = addToAbsGraphStart(
         startRow, startCol, end: endRow, endCol) else {
           assertionFailure("Could not add start and end abs nodes.")
-          return
+          return nil
       }
 
       if let absPath = absWorld?.searchPathFrom(absStartId!, to: absEndId!) {
         let finalPath = constructPathFromAbsGraphPath(absPath)
-        NSLog("Found path =======> ")
-        NSLog("\(finalPath)")
+        NSLog("Found path =======>")
+        NSLog("\(absPath)")
+        return finalPath.map {
+          NSValue(CGPoint: (graph.getNodeById($0)?.toPoint.toCGPoint())!)
+        }
+      } else {
+        assertionFailure("Could not find path from start " +
+          "(\(startRow), \(startCol)) to (\(endRow), \(endCol)) nodes.")
+        return nil
       }
   }
 
