@@ -19,7 +19,8 @@ struct ClusterEntrance {
   var centerCol: Int
   var len: Int
 
-  init(id: Int, absNodeId: Int, centerRow: Int, centerCol: Int, len: Int) {
+  init(id: Int, absNodeId: Int, centerRow: Int,
+    centerCol: Int, len: Int) {
     self.id = id
     self.absNodeId = absNodeId
     self.centerRow = centerRow
@@ -49,7 +50,8 @@ class Entrance {
 
   init(id: Int, row: Int, col: Int, cluster1Id: Int,
     cluster2Id: Int, centerRow: Int, centerCol: Int,
-    center1Id: Int, center2Id: Int, len: Int, isHorizontal: Bool) {
+    center1Id: Int, center2Id: Int, len: Int,
+    isHorizontal: Bool) {
       self.id = id
       self.row = row
       self.col = col
@@ -113,7 +115,8 @@ class Cluster {
     return self.env.initNewSearchWithGraph(self.graph)
   } ()
 
-  init(id: Int, env: Environment, graph: Graph, row: Int, col: Int, width: Int, height: Int) {
+  init(id: Int, env: Environment, graph: Graph, row: Int,
+    col: Int, width: Int, height: Int) {
     self.id = id
     self.env = env
     self.graph = graph
@@ -126,6 +129,13 @@ class Cluster {
   /// Returns local center for the cluster entrance.
   func centerForEntrance(e: ClusterEntrance) -> Int {
     return (e.centerRow - startRow) * width + (e.centerCol - startCol)
+  }
+
+  func entranceAtRow(row: Int, col: Int) -> ClusterEntrance? {
+    let e = entrances.filter {
+      $0.centerRow == row && $0.centerCol == col
+    }
+    return e.first
   }
 
   func initEntrancePaths() {
@@ -159,7 +169,8 @@ class Cluster {
   func createDistsArray(count: Int) -> [[Float]] {
     var dists = [[Float]]()
     for _ in 0..<count {
-      dists.append(Array<Float>(count: count, repeatedValue: DIST_INFINITY))
+      dists.append(Array<Float>(count: count,
+        repeatedValue: DIST_INFINITY))
     }
     return dists
   }
@@ -180,7 +191,8 @@ class Cluster {
 
   /// Compute entrance paths only for entrances which return true from
   /// the filter.
-  func computeEntrancePathFrom(entrance: ClusterEntrance, atIndex index: Int, filter: Int -> Bool) {
+  func computeEntrancePathFrom(entrance: ClusterEntrance,
+    atIndex index: Int, filter: Int -> Bool) {
     for (j, entrance2) in entrances.enumerate() {
       if filter(j) {
         let (dist, path) = computePathBetweenEntrance(entrance,
@@ -188,12 +200,13 @@ class Cluster {
         entranceDists[index][j] = dist
         setCachedPath(path, betweenIndex: index, j)
         entranceDists[j][index] = dist
-        setCachedPath(path, betweenIndex: j, index)
+        setCachedPath(path!.reverse(), betweenIndex: j, index)
       }
     }
   }
 
-  func computePathBetweenEntrance(e1: ClusterEntrance, and e2: ClusterEntrance) -> (Float, [Int]?) {
+  func computePathBetweenEntrance(e1: ClusterEntrance,
+    and e2: ClusterEntrance) -> (Float, [Int]?) {
     let center1 = centerForEntrance(e1)
     let center2 = centerForEntrance(e2)
 
@@ -202,6 +215,14 @@ class Cluster {
       return (search.pathCost, path)
     }
     return (DIST_INFINITY, nil)
+  }
+
+  /// Returns the cached path between entrances. The path contains
+  /// indexes of both start and end.
+  func cachedPathBetweenEntrance(e1: ClusterEntrance, _ e2: ClusterEntrance) -> [Int]? {
+    let idx1 = entrances.indexOf { $0.id == e1.id }
+    let idx2 = entrances.indexOf { $0.id == e2.id }
+    return cachedPathBetweenEntranceIndex(idx1!, j: idx2!)
   }
 
   func cachedPathBetweenEntranceIndex(i: Int, j: Int) -> [Int]? {
@@ -214,7 +235,8 @@ class Cluster {
     return entranceDists[i][j]
   }
 
-  func costBetweenEntrances(e1: ClusterEntrance, _ e2: ClusterEntrance) -> Float {
+  func costBetweenEntrances(e1: ClusterEntrance,
+    _ e2: ClusterEntrance) -> Float {
     let idx1 = entrances.indexOf { $0.id == e1.id }
     let idx2 = entrances.indexOf { $0.id == e2.id }
     return cachedPathDistBetweenEntranceIndex(idx1!, j:idx2!)
@@ -231,7 +253,8 @@ class Cluster {
     return i * 31 + j
   }
 
-  func isEntrance(e1: ClusterEntrance, connectedWith e2: ClusterEntrance) -> Bool {
+  func isEntrance(e1: ClusterEntrance,
+    connectedWith e2: ClusterEntrance) -> Bool {
     return costBetweenEntrances(e1, e2) != DIST_INFINITY
   }
 
@@ -241,6 +264,10 @@ class Cluster {
 
   func addClusterEntrances(ce: [ClusterEntrance]) {
     entrances.appendContentsOf(ce)
+  }
+
+  func convertPath(path: [Int], toGlobalGraph graph: Graph) -> [Int] {
+    return path.map { graph.width * startRow + startCol + $0 }
   }
 
 }

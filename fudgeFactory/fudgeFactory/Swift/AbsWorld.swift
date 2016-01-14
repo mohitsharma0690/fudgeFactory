@@ -235,7 +235,16 @@ class AbsWorld {
     search = env.initNewSearchWithGraph(absGraph)
   }
 
-  func searchPathFrom(startId: Int, to endId: Int) {
-
+  /// Path in an abstract graph which consists of the actual
+  /// nodeIds'.
+  func searchPathFrom(startId: Int, to endId: Int) -> [Int]? {
+    if search == nil {
+      initSearch()
+    }
+    guard let path = search?.path(startId, to: endId) else {
+      return nil
+    }
+    return path.map { absGraph.nodeById($0).info.nodeId }
   }
+
 }

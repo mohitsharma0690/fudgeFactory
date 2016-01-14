@@ -271,6 +271,48 @@ class World : NSObject {
       return (absStart, absEnd)
   }
 
+  func constructPathFromAbsGraphPath(absPath: [Int]) -> [Int] {
+    var path = [Int]()
+
+    var secondGenerator = absPath.generate()
+    secondGenerator.next() // Move to next node
+    for nodeId in absPath {
+      path.append(nodeId)
+      if let nextNodeId = secondGenerator.next() {
+        if let cluster1 = clusterForNodeId(nodeId),
+          cluster2 = clusterForNodeId(nextNodeId) {
+
+            if cluster1.id == cluster2.id {
+              // add path between the two entrances at each cluster
+              let (row1, col1) = graph.positionForNodeId(nodeId)
+              let (row2, col2) = graph.positionForNodeId(nextNodeId)
+              if let e1 = cluster1.entranceAtRow(row1, col: col1),
+                e2 = cluster1.entranceAtRow(row2, col: col2) {
+
+                  if var clusterPath = cluster1.cachedPathBetweenEntrance(e1, e2) {
+                    clusterPath = cluster1.convertPath(clusterPath,
+                      toGlobalGraph: graph)
+                    // Remove start. Added above.
+                    clusterPath.removeFirst()
+                    // Remove end. Will be added in the next iteration.
+                    clusterPath.removeLast()
+                    // Add to global path
+                    path.appendContentsOf(clusterPath)
+                  } else {
+                    assertionFailure("Could not find path between \(e1) and \(e2)")
+                  }
+              } else {
+                assertionFailure("Did not find entrance in cluster \(cluster1)")
+              }
+            }
+        } else {
+          assertionFailure("Cannot find cluster for node \(nodeId), \(nextNodeId)")
+        }
+      }
+    }
+    return path
+  }
+
   func searchFromStart(startRow: Int, _ startCol: Int,
     toEnd endRow: Int, _ endCol: Int) {
       guard let (absStartId, absEndId) = addToAbsGraphStart(
@@ -279,7 +321,12 @@ class World : NSObject {
           return
       }
 
-      absWorld?.searchPathFrom(absStartId!, to: absEndId!)
+      if let absPath = absWorld?.searchPathFrom(absStartId!, to: absEndId!) {
+        let finalPath = constructPathFromAbsGraphPath(absPath)
+        NSLog("Found path =======> ")
+        NSLog("\(finalPath)")
+      }
   }
+
 
 }

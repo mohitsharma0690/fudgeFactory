@@ -108,11 +108,12 @@ class AbsGraph : SearchGraph {
   /// ===== Search Graph =====
 
   func getNodeById(nodeId: Int) -> GraphNode? {
-    return nil
+    return nodeById(nodeId)
   }
 
   func canMoveFrom(a: GraphNode, toAdjacent b: GraphNode) -> Bool {
-    return false
+    // You can always move between edges in an abstract graph.
+    return true
   }
 
 }
