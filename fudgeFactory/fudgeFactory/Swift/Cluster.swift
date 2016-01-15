@@ -200,7 +200,7 @@ class Cluster {
         entranceDists[index][j] = dist
         setCachedPath(path, betweenIndex: index, j)
         entranceDists[j][index] = dist
-        setCachedPath(path!.reverse(), betweenIndex: j, index)
+        setCachedPath(path?.reverse(), betweenIndex: j, index)
       }
     }
   }
