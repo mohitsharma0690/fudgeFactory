@@ -22,6 +22,13 @@ class AbsNode : GraphNode {
     edges.append(edge)
   }
 
+  func removeEdgeToNode(nodeId: Int) -> Edge? {
+    guard let index = edges.indexOf({ $0.toNode == nodeId }) else {
+      return nil
+    }
+    return edges.removeAtIndex(index)
+  }
+
   /// ===== GraphNode =====
   var row: Int { return info.row }
   var col: Int { return info.col }
@@ -77,6 +84,8 @@ class AbsEdge: Edge {
 
 // TODO(Mohit): Rename SearchGraph to Searchable
 class AbsGraph : SearchGraph {
+  // Use array since it would be much faster as we only use
+  // it as a list i.e. either first or last.
   var nodes = [AbsNode]()
   var graph: Graph
 
@@ -103,6 +112,19 @@ class AbsGraph : SearchGraph {
   func addAbsNode(absNode: AbsNode) {
     assert(absNode.id == nodes.count)
     nodes.append(absNode)
+  }
+
+  func removeAbsNode(node: AbsNode) {
+    assert(node.id == nodes.last?.id,
+      "Trying to remove non last node breaks index.")
+
+    // Remove edges to node.
+    for succ in node.successors {
+      let succNode = nodeById(succ)
+      succNode.removeEdgeToNode(node.id)
+    }
+    nodes.removeLast()
+
   }
 
   /// ===== Search Graph =====

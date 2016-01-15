@@ -254,14 +254,16 @@ class World : NSObject {
   /// Insert start, end nodes to abstract graph
   func addToAbsGraphStart(startRow: Int, _ startCol: Int,
     end endRow: Int, _ endCol: Int) -> (Int?, Int?)? {
-      guard let startId = graph.nodeIdForPositionWithRow(startRow, col: startCol) else {
-        assertionFailure("Cannot find start location in graph")
-        return nil
+      guard let startId = graph.nodeIdForPositionWithRow(startRow,
+        col: startCol) else {
+          assertionFailure("Cannot find start location in graph")
+          return nil
       }
 
-      guard let endId = graph.nodeIdForPositionWithRow(endRow, col: endCol) else {
-        assertionFailure("Cannot find start location in graph")
-        return nil
+      guard let endId = graph.nodeIdForPositionWithRow(endRow,
+        col: endCol) else {
+          assertionFailure("Cannot find start location in graph")
+          return nil
       }
 
       let absStart = absWorld?.insertNodeToAbsGraph(startId,
@@ -269,6 +271,31 @@ class World : NSObject {
       let absEnd = absWorld?.insertNodeToAbsGraph(endId,
         atRow: endRow, col: endCol, index: 1)
       return (absStart, absEnd)
+  }
+
+  func removeFromAbsGraphStartRow(startRow: Int, col startCol: Int,
+    endRow: Int, col endCol: Int) {
+      guard let startId = graph.nodeIdForPositionWithRow(startRow,
+        col: startCol) else {
+          assertionFailure("Cannot find start location in graph")
+          return
+      }
+
+      guard let endId = graph.nodeIdForPositionWithRow(endRow,
+        col: endCol) else {
+          assertionFailure("Cannot find start location in graph")
+          return
+      }
+
+      // Remove end first since we want to delete things in the
+      // reverse order of what they were added. This allows us
+      // to use arrays as deque and remove only from last which
+      // is much faster than removing from any arbitrary index.
+      absWorld?.removeNodeFromAbsGraph(endId, atRow: endRow,
+        col: endCol, index: 1)
+
+      absWorld?.removeNodeFromAbsGraph(startId, atRow: startRow,
+        col: startCol, index: 0)
   }
 
   func constructPathFromAbsGraphPath(absPath: [Int]) -> [Int] {
@@ -321,6 +348,11 @@ class World : NSObject {
           return nil
       }
 
+      defer {
+        removeFromAbsGraphStartRow(startRow, col: startCol,
+          endRow: endRow, col: endCol)
+      }
+
       if let absPath = absWorld?.searchPathFrom(absStartId!, to: absEndId!) {
         let finalPath = constructPathFromAbsGraphPath(absPath)
         NSLog("Found path =======>")
@@ -333,6 +365,8 @@ class World : NSObject {
           "(\(startRow), \(startCol)) to (\(endRow), \(endCol)) nodes.")
         return nil
       }
+
+
   }
 
 

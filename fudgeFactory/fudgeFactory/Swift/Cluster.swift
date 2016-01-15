@@ -146,10 +146,31 @@ class Cluster {
   }
 
   func resizeEntrancePaths() {
-    guard entranceDists.count < entrances.count else {
-      NSLog("Entrance paths don't need resizing.")
-      return;
+    if entranceDists.count < entrances.count {
+      incEntrancePathsSize()
+    } else if (entranceDists.count > entrances.count) {
+      decEntrancePathsSize()
+    } else {
+      NSLog("Entrances and their dist count is same." +
+        "No resize required.")
     }
+  }
+
+  private func decEntrancePathsSize() {
+    guard entranceDists.count - entrances.count == 1 else {
+      assertionFailure("Invalid resizing.")
+      return
+    }
+
+    // Remove dists for last cluster entrance
+    entranceDists.removeLast()
+    for i in 0..<entranceDists.count {
+      var d = entranceDists[i]
+      d.removeLast()
+    }
+  }
+
+  private func incEntrancePathsSize() {
     guard entrances.count - entranceDists.count == 1 else {
       assertionFailure("Invalid resizing.")
       return
@@ -264,6 +285,12 @@ class Cluster {
 
   func addClusterEntrances(ce: [ClusterEntrance]) {
     entrances.appendContentsOf(ce)
+  }
+
+  func removeClusterEntrance(ce: ClusterEntrance) {
+    assert(entrances.last?.id == ce.id,
+      "Trying to remove non last cluster entrance.");
+    entrances.removeLast()
   }
 
   func convertPath(path: [Int], toGlobalGraph graph: Graph) -> [Int] {

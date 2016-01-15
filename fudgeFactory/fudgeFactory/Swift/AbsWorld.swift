@@ -186,49 +186,81 @@ class AbsWorld {
     return successors.map { return (nodeForAbsNode($0)?.toPoint)! }
   }
 
+  /// Remove start, end nodes to abstract graph
+
+  func removeNodeFromAbsGraph(nodeId: Int, atRow row: Int,
+    col: Int, index: Int) {
+      guard index == 0 || index == 1 else {
+        assertionFailure("Invalid index \(index)")
+        return
+      }
+
+      guard targetNodeIsAbsNode[index] == false else {
+        NSLog("Start or end node is already an abs node, will not remove.")
+        return
+      }
+
+      let absNodeId = absGraph.maxNodeId!
+      let cluster = world.clusterForNodeId(nodeId)
+      guard let clusterEntrance = cluster?.entranceAtRow(row, col: col) else {
+        assertionFailure("Cannot find cluster entrance at (\(row), \(col))")
+        return
+      }
+
+      // Remove Abstract node and it's edges
+      let absNode = absGraph.nodeById(absNodeId)
+      absGraph.removeAbsNode(absNode)
+
+      // Remove cluster entrance
+      cluster?.removeClusterEntrance(clusterEntrance)
+
+      // Reinitialize paths.
+      cluster?.resizeEntrancePaths()
+  }
+
   /// Insert start, end nodes to abstract graph
 
-  func insertNodeToAbsGraph(nodeId: Int, atRow row: Int, col: Int, index: Int) -> Int? {
-    guard index == 0 || index == 1 else {
-      assertionFailure("Invalid index \(index)")
-      return nil
-    }
-
-    if let absNodeId = nodeIdToAbsNodeId[nodeId] {
-      // Node ID is already there in the abstract graph
-      targetNodeIsAbsNode[index] = true
-      return absNodeId
-    } else {
-      let absNodeId = absGraph.maxNodeId! + 1
-      targetNodeIsAbsNode[index] = false
-      guard let cluster = world.clusterForNodeId(nodeId) else {
-        assertionFailure("No cluster for node \(nodeId)")
+  func insertNodeToAbsGraph(nodeId: Int, atRow row: Int,
+    col: Int, index: Int) -> Int? {
+      guard index == 0 || index == 1 else {
+        assertionFailure("Invalid index \(index)")
         return nil
       }
 
-      // Add cluster entrance for node
-      let entrance = ClusterEntrance(id: cluster.id,
-        absNodeId: absNodeId, centerRow: row, centerCol: col, len: 1)
-      cluster.addClusterEntrance(entrance)
+      if let absNodeId = nodeIdToAbsNodeId[nodeId] {
+        // Node ID is already there in the abstract graph
+        targetNodeIsAbsNode[index] = true
+        return absNodeId
+      } else {
+        let absNodeId = absGraph.maxNodeId! + 1
+        targetNodeIsAbsNode[index] = false
+        guard let cluster = world.clusterForNodeId(nodeId) else {
+          assertionFailure("No cluster for node \(nodeId)")
+          return nil
+        }
 
-      // Add abstract node.
-      let info = AbsNodeInfo(clusterId: cluster.id,
-        row: row, col: col, nodeId: nodeId)
-      let node = AbsNode(id: absNodeId, info: info)
-      absGraph.addAbsNode(node)
+        // Add cluster entrance for node
+        let entrance = ClusterEntrance(id: cluster.id,
+          absNodeId: absNodeId, centerRow: row, centerCol: col, len: 1)
+        cluster.addClusterEntrance(entrance)
 
-      // Add paths from entrance to other cluster entrances
-      cluster.resizeEntrancePaths()
-      cluster.recomputeEntrancePathsFrom(entrance)
-      // Create Intra cluster edges
-      createIntraEdgesForCluster(cluster,
-        entrance: entrance,
-        atIndex: cluster.entrances.count - 1) {
-          $0 != cluster.entrances.count - 1
+        // Add abstract node.
+        let info = AbsNodeInfo(clusterId: cluster.id,
+          row: row, col: col, nodeId: nodeId)
+        let node = AbsNode(id: absNodeId, info: info)
+        absGraph.addAbsNode(node)
+
+        // Add paths from entrance to other cluster entrances
+        cluster.resizeEntrancePaths()
+        cluster.recomputeEntrancePathsFrom(entrance)
+        // Create Intra cluster edges
+        createIntraEdgesForCluster(cluster,
+          entrance: entrance, atIndex: cluster.entrances.count - 1) {
+            $0 != cluster.entrances.count - 1
+        }
+
+        return absNodeId
       }
-
-      return absNodeId
-    }
   }
 
   func initSearch() {
