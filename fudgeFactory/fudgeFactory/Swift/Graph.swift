@@ -155,7 +155,7 @@ class Graph : NSObject, SearchGraph {
   }
 
   func isDiagnolMoveFrom(from: GraphNode, to: GraphNode) -> Bool {
-    return abs(from.row - to.row) + abs(from.col - to.row) == 2
+    return from.row != to.row && from.col != to.col
   }
 
   func adjacentNodesForDiagnolMoveFrom(from: GraphNode,
