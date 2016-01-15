@@ -356,7 +356,7 @@ class World : NSObject {
       if let absPath = absWorld?.searchPathFrom(absStartId!, to: absEndId!) {
         let finalPath = constructPathFromAbsGraphPath(absPath)
         NSLog("Found path =======>")
-        NSLog("\(absPath)")
+        NSLog("\(finalPath)")
         return finalPath.map {
           NSValue(CGPoint: (graph.getNodeById($0)?.toPoint.toCGPoint())!)
         }

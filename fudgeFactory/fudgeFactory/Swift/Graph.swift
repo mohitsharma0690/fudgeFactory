@@ -82,7 +82,7 @@ class Graph : NSObject, SearchGraph {
         for j in startCol.stride(to: startCol + width, by: 1) {
           let node = graph.nodeForPositionWithRow(i, col: j)
 
-          let newNodeInfo = NodeInfo(row: i, col: j)
+          let newNodeInfo = NodeInfo(row: i - startRow, col: j - startCol)
           newNodeInfo.isObstacle = (node?.isWalkable() == false)
           let newNode = Node(WithId: nodeId, info: newNodeInfo)
           nodesById[nodeId] = newNode
@@ -159,7 +159,11 @@ class Graph : NSObject, SearchGraph {
   }
 
   func adjacentNodesForDiagnolMoveFrom(from: GraphNode,
-    to: GraphNode) -> (GraphNode?, GraphNode?) {
+    to: GraphNode) -> (GraphNode?, GraphNode?)? {
+      // If not diagnol return nil.
+      guard from.row != to.row && from.col != to.col else {
+        return nil
+      }
       return (nodeForPositionWithRow(from.row, col: to.col),
         nodeForPositionWithRow(to.row, col: from.col))
   }
@@ -169,13 +173,11 @@ class Graph : NSObject, SearchGraph {
       return false
     }
 
-    // Diagnol movement with adjacent nodes occupied is avoided.
-    if isDiagnolMoveFrom(from, to: to) {
-      let (a, b) = adjacentNodesForDiagnolMoveFrom(from, to: to)
-      return (a?.isWalkable() ?? false) && (b?.isWalkable() ?? false)
-    } else {
+    guard let (a, b) = adjacentNodesForDiagnolMoveFrom(from, to: to) else {
       return true
     }
+    // Diagnol movement with adjacent nodes occupied is avoided.
+    return (a?.isWalkable() ?? false) && (b?.isWalkable() ?? false)
 
   }
 

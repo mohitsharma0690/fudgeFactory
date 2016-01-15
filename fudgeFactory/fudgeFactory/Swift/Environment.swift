@@ -52,7 +52,7 @@ class Environment: NSObject {
   var DEBUG_COLOR_ENTRANCES = false
   var DEBUG_COLOR_ABS_NODES = false
 
-  let heuristicType = HeuristicType.Manhattan
+  let heuristicType = HeuristicType.Euclidean
 
   var openListImpl = OpenListImplType.OpenListArray
   var closedListImpl = ClosedListImplType.ClosedListArray

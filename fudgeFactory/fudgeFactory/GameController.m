@@ -179,6 +179,7 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
     if (path.count) {
       [[NSNotificationCenter defaultCenter] postNotificationName:@"didFindPath" object:path];
     }
+    self.didPerformSearch = YES;
   } else if (self.cellsToColor == 0 && self.didPerformSearch) {
     [self.gameLayer resetGameBoard];
     delay = 1.0f;
