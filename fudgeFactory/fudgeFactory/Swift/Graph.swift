@@ -136,13 +136,13 @@ class Graph : NSObject, SearchGraph {
         //          let edgeInfo = EdgeInfo(WithCost: 1)
         //          return Edge(toNode: e!, info: edgeInfo)
         //        }
-        
+
       }
     }
   }
 
   /// Walkability
-  
+
   func isObstacleAtX(x: Int, y: Int) -> Bool {
     return !isObstacleAtX(x, y: y)
   }
@@ -154,13 +154,29 @@ class Graph : NSObject, SearchGraph {
     return node!.isWalkable()
   }
 
+  func isDiagnolMoveFrom(from: GraphNode, to: GraphNode) -> Bool {
+    return abs(from.row - to.row) + abs(from.col - to.row) == 2
+  }
+
+  func adjacentNodesForDiagnolMoveFrom(from: GraphNode,
+    to: GraphNode) -> (GraphNode?, GraphNode?) {
+      return (nodeForPositionWithRow(from.row, col: to.col),
+        nodeForPositionWithRow(to.row, col: from.col))
+  }
+
   func canMoveFrom(from: GraphNode, toAdjacent to: GraphNode) -> Bool {
     guard to.isWalkable() else {
       return false
     }
-    // TODO(Mohit): Diagnol movement with the adjacent nodes occupied
-    // should also theoretically be avoided.
-    return true
+
+    // Diagnol movement with adjacent nodes occupied is avoided.
+    if isDiagnolMoveFrom(from, to: to) {
+      let (a, b) = adjacentNodesForDiagnolMoveFrom(from, to: to)
+      return (a?.isWalkable() ?? false) && (b?.isWalkable() ?? false)
+    } else {
+      return true
+    }
+
   }
 
 }
