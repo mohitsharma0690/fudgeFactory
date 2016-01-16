@@ -375,6 +375,14 @@ class AStar : Pathfinder {
     guard var currNode = graph.getNodeById(from) else {
       return nil
     }
+
+    defer {
+      // Prevent target nodes from being cached since these values change for
+      // abstract graphs as well as for cluster graphs.
+      removeAstarNodeForGraphNodeId(from)
+      removeAstarNodeForGraphNodeId(to)
+    }
+
     var currAstarNode = astarNodeForGraphNode(currNode)
     currAstarNode.g = 0
     currAstarNode.h = env.heuristicBetween(currNode, b: targetNode)
@@ -444,6 +452,10 @@ class AStar : Pathfinder {
       return astarNode
     }
     return node
+  }
+
+  func removeAstarNodeForGraphNodeId(nodeId: Int) -> GraphAStarNode? {
+    return astarNodesByNodeId.removeValueForKey(nodeId)
   }
 
   func graphNodeForAstarNode(astarNode: GraphAStarNode) -> GraphNode {
