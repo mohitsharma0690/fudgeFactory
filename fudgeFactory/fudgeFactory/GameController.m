@@ -24,6 +24,8 @@
 @property(nonatomic, readwrite, weak) GameLayer *gameLayer;
 @property(nonatomic, readwrite, weak) DebugViewLayer *debugViewLayer;
 
+@property(nonatomic, readwrite, strong) NSArray *abstractGraphNodePoints;
+
 // used for resetting
 @property(nonatomic, readwrite, assign) BOOL didImportToSwift;
 @property(nonatomic, readwrite, assign) BOOL didColorCellsForDebugging;
@@ -75,6 +77,9 @@ static inline BOOL areColorEqual(ccColor3B a, ccColor3B b) {
                                              selector:@selector(colorNodes:)
                                                  name:@"colorNodes"
                                                object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(colorAbstractNodes:) name:[Utils NOTIF_COLOR_ABS_NODES] object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(createLines:)
@@ -206,6 +211,17 @@ static float delay = 1;
     [self colorNodeAtPoint:pointValue];
   }
   self.didColorCellsForDebugging = YES;
+}
+
+- (void)colorAbstractNodes:(NSNotification *)notification {
+  NSDictionary *userInfo = notification.userInfo;
+  NSArray *colorNodes = userInfo[[Utils KEY_NODES_TO_COLOR]];
+  for (NSValue *pointValue in colorNodes) {
+    [self.gameLayer changeColorForSpriteAtBoardPoint:pointValue.CGPointValue
+                                                  to:ccGRAY];
+
+  }
+  self.abstractGraphNodePoints = colorNodes;
 }
 
 - (void)resetColorNodes {

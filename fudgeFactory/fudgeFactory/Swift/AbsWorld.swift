@@ -154,9 +154,9 @@ class AbsWorld {
       let absPoints = absGraph.nodes.map { return (nodeForAbsNode($0)?.toPoint)! }
       let points = absPoints.map { NSValue(CGPoint: $0.toCGPoint()) }
       NSNotificationCenter.defaultCenter().postNotificationName(
-        "colorNodes",
+        Utils.NOTIF_COLOR_ABS_NODES,
         object: nil,
-        userInfo: ["nodes": points])
+        userInfo: [Utils.KEY_NODES_TO_COLOR: points])
     }
   }
 

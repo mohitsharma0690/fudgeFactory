@@ -155,6 +155,11 @@ typedef enum {
       }
     }
   }
+
+  for (NSValue *pointValue in self.gameController.abstractGraphNodePoints) {
+    [self changeColorForSpriteAtBoardPoint:pointValue.CGPointValue to:ccGRAY];
+
+  }
   // set start and end default positions
   [(CCSprite *)self.gridPointToSpriteMap[[NSValue valueWithCGPoint:self.gameController.startPoint]] setColor:kStartColor];
   [(CCSprite *)self.gridPointToSpriteMap[[NSValue valueWithCGPoint:self.gameController.endPoint]] setColor:kEndColor];

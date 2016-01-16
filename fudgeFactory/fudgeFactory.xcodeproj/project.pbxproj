@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2744BD5C1C4A472E00A0796E /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2744BD5B1C4A472E00A0796E /* Utils.swift */; };
 		274BCBB21C3D1F3500B16D48 /* AStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274BCBB11C3D1F3500B16D48 /* AStar.swift */; };
 		274BCBB41C3F41A700B16D48 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274BCBB31C3F41A700B16D48 /* Search.swift */; };
 		274BCBB61C41BBAE00B16D48 /* AbsWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274BCBB51C41BBAE00B16D48 /* AbsWorld.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2744BD5B1C4A472E00A0796E /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		274BCBB11C3D1F3500B16D48 /* AStar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AStar.swift; sourceTree = "<group>"; };
 		274BCBB31C3F41A700B16D48 /* Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		274BCBB51C41BBAE00B16D48 /* AbsWorld.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbsWorld.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				274BCBB11C3D1F3500B16D48 /* AStar.swift */,
 				274BCBB31C3F41A700B16D48 /* Search.swift */,
 				274BCBB51C41BBAE00B16D48 /* AbsWorld.swift */,
+				2744BD5B1C4A472E00A0796E /* Utils.swift */,
 			);
 			path = Swift;
 			sourceTree = "<group>";
@@ -349,6 +352,7 @@
 				27E89BD41C37431000986974 /* World.swift in Sources */,
 				274BCBB21C3D1F3500B16D48 /* AStar.swift in Sources */,
 				27E89BD21C34BD6900986974 /* Cluster.swift in Sources */,
+				2744BD5C1C4A472E00A0796E /* Utils.swift in Sources */,
 				27E89BCE1C3337D400986974 /* Graph.swift in Sources */,
 				274BCBB91C425FDA00B16D48 /* DebugViewLayer.m in Sources */,
 				9104F245188CF78E00678D3C /* GameObject.m in Sources */,

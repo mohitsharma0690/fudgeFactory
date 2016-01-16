@@ -21,6 +21,8 @@
 
 @interface GameController : NSObject
 
+@property(nonatomic, readonly, strong) NSArray *abstractGraphNodePoints;
+
 + (GameController *)createGame;
 
 - (id)initWithGameObject:(GameObject *)gameObject;
